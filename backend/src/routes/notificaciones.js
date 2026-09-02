@@ -162,7 +162,7 @@ router.get('/', verifyPropietario, async (req, res) => {
       items.push({
         id: 'sin-rating',
         tipo: 'info',
-        mensaje: `${sin_rating} empleado${sin_rating === 1 ? '' : 's'} sin calificaciones — ayuda a tu comunidad calificándolos`,
+        mensaje: `${sin_rating} empleado${sin_rating === 1 ? '' : 's'} sin calificaciones. Ayuda a tu comunidad calificándolos`,
         fecha: new Date().toISOString(),
       });
     }
