@@ -54,7 +54,7 @@ router.post('/', verifyAdmin, (req, res) => {
         'INSERT INTO avisos (titulo, cuerpo, prioridad, adjunto, adjunto_nombre, creado_por) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *',
         [
           titulo, cuerpo, prioridad || 'normal',
-          req.file ? `/uploads/${req.file.filename}` : null,
+          req.file ? `/api/uploads/${req.file.filename}` : null,
           req.file ? req.file.originalname : null,
           req.user.id,
         ]

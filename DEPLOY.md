@@ -1,8 +1,13 @@
 # Deploy en Vercel
 
-El repo ya trae `vercel.json`: el API de Express corre como función
-serverless (`backend/api/index.js`) y el frontend se sirve estático
-(build de Vite). Solo falta la base de datos y las variables de entorno.
+El repo ya trae `vercel.json` en formato **multi-servicio**: el servicio
+`frontend` (root `frontend/`, framework Vite — usa el script
+`vercel-build`, que saca el build a `frontend/dist`) y el servicio
+`backend` (root `backend/`, con las funciones en `backend/api/` que
+exportan la app de Express). Los rewrites mandan `/api/*` al backend y
+todo lo demás al frontend; los adjuntos se sirven por `/api/uploads/*`
+para pasar por el mismo servicio. Solo falta la base de datos y las
+variables de entorno.
 
 ## 1. Base de datos (Postgres hosteado)
 
@@ -22,10 +27,10 @@ DATABASE_URL="postgres://...?sslmode=require" npm run create-admin -- admin@tucl
 
 ## 2. Importar el proyecto en Vercel
 
-1. **Add New → Project** → importa `ElBeDev/seguridadfrac`.
-2. Framework preset: **Other** (el `vercel.json` manda; no elijas Vite
-   ni configures Root Directory).
-3. En **Environment Variables** agrega:
+1. **Add New → Project** → importa `ElBeDev/seguridadfrac`. El
+   `vercel.json` define los dos servicios — no configures Root Directory.
+2. En **Environment Variables** agrega (si el dashboard pide asignarlas
+   por servicio, van al servicio **backend**):
 
 | Variable | Valor |
 |---|---|
