@@ -35,8 +35,9 @@ DATABASE_URL="postgres://...?sslmode=require" npm run create-admin -- admin@tucl
 | Variable | Valor |
 |---|---|
 | `DATABASE_URL` | el connection string de Neon (con `sslmode=require`) |
-| `JWT_SECRET` | una cadena aleatoria larga (`openssl rand -hex 32`) |
-| `UPLOADS_DIR` | `/tmp/uploads` |
+| `JWT_SECRET` | una cadena aleatoria larga (`openssl rand -hex 32`) — **ya configurada por CLI en este proyecto** |
+
+(`UPLOADS_DIR` es opcional: en Vercel el default ya es `/tmp/uploads`.)
 
 4. Deploy.
 
@@ -54,10 +55,11 @@ DATABASE_URL="postgres://...?sslmode=require" npm run create-admin -- admin@tucl
 - **Rate limiting**: `express-rate-limit` en memoria es por instancia;
   con varias instancias el límite efectivo es más laxo. Para endurecerlo:
   store en Redis/Upstash.
-- **bcrypt nativo**: compila/descarga binario en el build de Vercel. Si
-  el build llegara a fallar por bcrypt, el cambio es a `bcryptjs`
-  (mismo API) en `backend/package.json` + los dos `require`.
 - **Cold starts**: la primera petición tras inactividad tarda ~1-2s.
+
+Nota: los passwords usan `bcryptjs` (JS puro) en vez de `bcrypt` nativo —
+npm bloquea los install scripts no aprobados en el build de Vercel y el
+binario nativo nunca se descargaba. Los hashes son compatibles entre ambos.
 
 ## Desarrollo local
 

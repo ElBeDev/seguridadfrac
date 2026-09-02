@@ -4,3 +4,5 @@ backend/public/
 dist/
 .DS_Store
 backend/uploads/
+.vercel
+.env*

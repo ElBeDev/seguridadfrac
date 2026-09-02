@@ -102,7 +102,8 @@ app.use('/api/reservas', require('./routes/reservas'));
 // Adjuntos de avisos (mismo dir que configura multer en routes/avisos.js).
 // Se monta también bajo /api/uploads porque en Vercel solo /api/* llega
 // al servicio de backend.
-app.use(['/uploads', '/api/uploads'], express.static(process.env.UPLOADS_DIR || path.join(__dirname, '../uploads')));
+const { UPLOADS_DIR } = require('./config/uploads');
+app.use(['/uploads', '/api/uploads'], express.static(UPLOADS_DIR));
 // Rutas de catálogo de servicios
 const servicesRoutes = require('./routes/services');
 app.use('/api/services', servicesRoutes);

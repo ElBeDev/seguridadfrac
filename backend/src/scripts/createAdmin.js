@@ -2,7 +2,7 @@
 // Uso: node src/scripts/createAdmin.js <email> <password> [nombre_completo]
 const dotenv = require('dotenv');
 dotenv.config({ path: require('path').resolve(__dirname, '../../.env') });
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const pool = require('../config/db');
 const { SUPPORT_EMAIL } = require('../config/branding');
 
