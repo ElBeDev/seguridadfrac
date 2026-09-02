@@ -472,3 +472,11 @@
     overflow-x: auto;
   }
 }
+
+/* Labels de los formularios en modales (nada de placeholder-as-label) */
+.modal-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-text-light);
+  margin-bottom: -6px;
+}

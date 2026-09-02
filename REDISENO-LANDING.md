@@ -135,3 +135,31 @@ marca > preferencia del skill, y ambas registradas en Paso 2):
 - Skyline y aurora: sobreviven como firma ✓
 
 **Resultado: ningún Fail. Workflow completado.**
+
+---
+
+# Parte 2 — Pase de calidad al panel interno (2026-09-02)
+
+El tasteskill declara el product UI fuera de su alcance (Sección 13), así
+que aquí se aplicó SOLO el subconjunto transferible de reglas, no la
+composición de landing:
+
+- [x] **Placeholder-as-label eliminado en toda la app** (regla 4.6):
+      labels con `htmlFor`/`id` en los 12 formularios modales (Admin,
+      Empleados, Comunidad, Accesos, Finanzas) y en el registro de
+      empleado de Inicio; búsquedas y el validador de caseta con
+      `aria-label`. ~50 campos etiquetados.
+- [x] **Cero em/en-dashes visibles** en todo el panel (9.G): mensajes,
+      tablas, tooltips de gráficas, toasts y el string del backend de
+      notificaciones; los guiones de comentarios de código se quedan.
+- [x] **Emojis → iconos** (3.D): catálogo de 12 servicios con Fa icons en
+      chips con gradiente, criterios de calificación (reloj/escoba/
+      sonrisa/diana), estrellas de rating como `FaStar`, y fuera el 🎉
+      de Finanzas.
+- [x] **`prefers-reduced-motion` global** (6.B): kill-switch en index.css
+      que apaga animaciones y transiciones de toda la app.
+- [x] Verificación: `tsc` limpio, build OK, Playwright cuenta labels en
+      los modales (6/5/3 correctos), 12 iconos de servicio, 0 errores.
+
+Desviación consciente: los toasts conservan el prefijo "✓" (marca
+tipográfica, no emoji).

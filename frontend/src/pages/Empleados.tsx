@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaUserPlus, FaEye, FaSearch, FaUserEdit } from 'react-icons/fa';
+import { FaUserPlus, FaEye, FaSearch, FaUserEdit, FaStar } from 'react-icons/fa';
 import './Empleados.css';
 
 interface Empleado {
@@ -298,7 +298,7 @@ function Empleados(): React.ReactNode {
                           (() => {
                             const vals = [empleado.avg_puntualidad, empleado.avg_limpieza, empleado.avg_personalidad, empleado.avg_calidad_servicio]
                               .map(Number).filter(v => !isNaN(v) && v > 0);
-                            return vals.length > 0 ? (vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(1) + ' ⭐' : 'Sin calificar';
+                            return vals.length > 0 ? <>{(vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(1)} <FaStar className="star-icon" /></> : 'Sin calificar';
                           })()
                         }</td>
                         <td>
@@ -318,7 +318,9 @@ function Empleados(): React.ReactNode {
           <div className="table-card">
             <h2>Buscar Empleado</h2>
             <div className="filter-row">
+              <label className="modal-label" htmlFor="emp-curp-o-nombre">CURP o nombre</label>
               <input
+                id="emp-curp-o-nombre"
                 type="text"
                 placeholder="CURP o nombre"
                 value={busqueda}
@@ -418,11 +420,11 @@ function Empleados(): React.ReactNode {
             </div>
             <div className="detalle-grid">
               <div><strong>CURP</strong><span>{verDetalle.dni}</span></div>
-              <div><strong>Teléfono</strong><span>{verDetalle.telefono || '—'}</span></div>
-              <div><strong>Email</strong><span>{verDetalle.email || '—'}</span></div>
-              <div><strong>Zona</strong><span>{verDetalle.zona || '—'}</span></div>
-              <div><strong>Servicio</strong><span>{verDetalle.servicio || '—'}</span></div>
-              <div><strong>Rating promedio</strong><span>{promedioDe(verDetalle) ? `⭐ ${promedioDe(verDetalle)}` : 'Sin calificar'}</span></div>
+              <div><strong>Teléfono</strong><span>{verDetalle.telefono || '-'}</span></div>
+              <div><strong>Email</strong><span>{verDetalle.email || '-'}</span></div>
+              <div><strong>Zona</strong><span>{verDetalle.zona || '-'}</span></div>
+              <div><strong>Servicio</strong><span>{verDetalle.servicio || '-'}</span></div>
+              <div><strong>Rating promedio</strong><span>{promedioDe(verDetalle) ? <>{promedioDe(verDetalle)} <FaStar className="star-icon" /></> : 'Sin calificar'}</span></div>
             </div>
             {verDetalle.motivo && (
               <p className="detalle-notas"><strong>Notas:</strong> {verDetalle.motivo}</p>
@@ -445,29 +447,39 @@ function Empleados(): React.ReactNode {
           <div className="modal-card" onClick={(e) => e.stopPropagation()}>
             <h2>Editar Empleado</h2>
             <form onSubmit={guardarEdicion}>
+              <label className="modal-label" htmlFor="emp-nombre-completo">Nombre completo</label>
               <input
+                id="emp-nombre-completo"
                 placeholder="Nombre completo"
                 value={editForm.nombre_completo}
                 onChange={(e) => setEditForm({ ...editForm, nombre_completo: e.target.value })}
                 required
               />
+              <label className="modal-label" htmlFor="emp-telefono">Teléfono</label>
               <input
+                id="emp-telefono"
                 placeholder="Teléfono"
                 value={editForm.telefono}
                 onChange={(e) => setEditForm({ ...editForm, telefono: e.target.value })}
               />
+              <label className="modal-label" htmlFor="emp-email">Email</label>
               <input
+                id="emp-email"
                 type="email"
                 placeholder="Email"
                 value={editForm.email}
                 onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
               />
+              <label className="modal-label" htmlFor="emp-zona">Zona</label>
               <input
+                id="emp-zona"
                 placeholder="Zona"
                 value={editForm.zona}
                 onChange={(e) => setEditForm({ ...editForm, zona: e.target.value })}
               />
+              <label className="modal-label" htmlFor="emp-servicio">Servicio</label>
               <select
+                id="emp-servicio"
                 value={editForm.servicio}
                 onChange={(e) => setEditForm({ ...editForm, servicio: e.target.value })}
                 className="modal-select"
@@ -475,7 +487,9 @@ function Empleados(): React.ReactNode {
                 <option value="">Sin servicio</option>
                 {serviciosDisponibles.map(s => <option key={s} value={s}>{s}</option>)}
               </select>
+              <label className="modal-label" htmlFor="emp-estado">Estado</label>
               <select
+                id="emp-estado"
                 value={editForm.estado_actual}
                 onChange={(e) => setEditForm({ ...editForm, estado_actual: e.target.value })}
                 className="modal-select"

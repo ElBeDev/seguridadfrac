@@ -235,7 +235,7 @@ function Comunidad() {
           <div className="table-card">
             <h2>Próximas reservas</h2>
             {reservas.length === 0 ? (
-              <p className="modulo-empty">No hay reservas próximas — sé el primero en apartar.</p>
+              <p className="modulo-empty">No hay reservas próximas. Sé el primero en apartar.</p>
             ) : (
               <table>
                 <thead>
@@ -254,7 +254,7 @@ function Comunidad() {
                       <tr key={reserva.id}>
                         <td>{reserva.amenidad_nombre}</td>
                         <td>{new Date(reserva.fecha).toLocaleDateString('es-MX', { weekday: 'short', day: 'numeric', month: 'short' })}</td>
-                        <td>{reserva.hora_inicio.slice(0, 5)} – {reserva.hora_fin.slice(0, 5)}</td>
+                        <td>{reserva.hora_inicio.slice(0, 5)} a {reserva.hora_fin.slice(0, 5)}</td>
                         <td>{reserva.propietario_nombre}{esMia ? ' (tú)' : ''}</td>
                         <td>
                           {(esAdmin || esMia) && (
@@ -409,9 +409,12 @@ function Comunidad() {
           <div className="modal-card" onClick={e => e.stopPropagation()}>
             <h2>Nuevo Aviso</h2>
             <form onSubmit={crearAviso}>
-              <input placeholder="Título" value={avisoForm.titulo} onChange={e => setAvisoForm({ ...avisoForm, titulo: e.target.value })} required />
-              <textarea className="modal-textarea" rows={4} placeholder="Contenido del aviso" value={avisoForm.cuerpo} onChange={e => setAvisoForm({ ...avisoForm, cuerpo: e.target.value })} required />
-              <select className="modal-select" value={avisoForm.prioridad} onChange={e => setAvisoForm({ ...avisoForm, prioridad: e.target.value })}>
+              <label className="modal-label" htmlFor="com-titulo">Título</label>
+              <input id="com-titulo" placeholder="Título" value={avisoForm.titulo} onChange={e => setAvisoForm({ ...avisoForm, titulo: e.target.value })} required />
+              <label className="modal-label" htmlFor="com-contenido-del-aviso">Contenido del aviso</label>
+              <textarea id="com-contenido-del-aviso" className="modal-textarea" rows={4} placeholder="Contenido del aviso" value={avisoForm.cuerpo} onChange={e => setAvisoForm({ ...avisoForm, cuerpo: e.target.value })} required />
+              <label className="modal-label" htmlFor="com-prioridad">Prioridad</label>
+              <select id="com-prioridad" className="modal-select" value={avisoForm.prioridad} onChange={e => setAvisoForm({ ...avisoForm, prioridad: e.target.value })}>
                 <option value="normal">Prioridad normal</option>
                 <option value="importante">Importante</option>
                 <option value="urgente">Urgente</option>
@@ -444,10 +447,14 @@ function Comunidad() {
               enviar('/api/eventos', { method: 'POST', body: JSON.stringify(eventoForm) }, '✓ Evento creado')
                 .then(ok => ok && setEventoForm({ titulo: '', descripcion: '', lugar: '', fecha_inicio: '' }));
             }}>
-              <input placeholder="Título" value={eventoForm.titulo} onChange={e => setEventoForm({ ...eventoForm, titulo: e.target.value })} required />
-              <textarea className="modal-textarea" rows={3} placeholder="Descripción" value={eventoForm.descripcion} onChange={e => setEventoForm({ ...eventoForm, descripcion: e.target.value })} />
-              <input placeholder="Lugar" value={eventoForm.lugar} onChange={e => setEventoForm({ ...eventoForm, lugar: e.target.value })} />
-              <input type="datetime-local" value={eventoForm.fecha_inicio} onChange={e => setEventoForm({ ...eventoForm, fecha_inicio: e.target.value })} required />
+              <label className="modal-label" htmlFor="com-titulo">Título</label>
+              <input id="com-titulo" placeholder="Título" value={eventoForm.titulo} onChange={e => setEventoForm({ ...eventoForm, titulo: e.target.value })} required />
+              <label className="modal-label" htmlFor="com-descripcion">Descripción</label>
+              <textarea id="com-descripcion" className="modal-textarea" rows={3} placeholder="Descripción" value={eventoForm.descripcion} onChange={e => setEventoForm({ ...eventoForm, descripcion: e.target.value })} />
+              <label className="modal-label" htmlFor="com-lugar">Lugar</label>
+              <input id="com-lugar" placeholder="Lugar" value={eventoForm.lugar} onChange={e => setEventoForm({ ...eventoForm, lugar: e.target.value })} />
+              <label className="modal-label" htmlFor="com-fecha-evento">Fecha y hora</label>
+              <input id="com-fecha-evento" type="datetime-local" value={eventoForm.fecha_inicio} onChange={e => setEventoForm({ ...eventoForm, fecha_inicio: e.target.value })} required />
               {errorModal && <p className="modal-error">{errorModal}</p>}
               <div className="modal-actions">
                 <button type="button" className="btn-secondary" onClick={() => setModal(null)}>Cancelar</button>
@@ -467,8 +474,10 @@ function Comunidad() {
               enviar('/api/encuestas', { method: 'POST', body: JSON.stringify(encuestaForm) }, '✓ Encuesta publicada')
                 .then(ok => ok && setEncuestaForm({ pregunta: '', descripcion: '', opciones: ['', ''] }));
             }}>
-              <input placeholder="Pregunta" value={encuestaForm.pregunta} onChange={e => setEncuestaForm({ ...encuestaForm, pregunta: e.target.value })} required />
-              <textarea className="modal-textarea" rows={2} placeholder="Descripción (opcional)" value={encuestaForm.descripcion} onChange={e => setEncuestaForm({ ...encuestaForm, descripcion: e.target.value })} />
+              <label className="modal-label" htmlFor="com-pregunta">Pregunta</label>
+              <input id="com-pregunta" placeholder="Pregunta" value={encuestaForm.pregunta} onChange={e => setEncuestaForm({ ...encuestaForm, pregunta: e.target.value })} required />
+              <label className="modal-label" htmlFor="com-descripcion-opcional">Descripción (opcional)</label>
+              <textarea id="com-descripcion-opcional" className="modal-textarea" rows={2} placeholder="Descripción (opcional)" value={encuestaForm.descripcion} onChange={e => setEncuestaForm({ ...encuestaForm, descripcion: e.target.value })} />
               {encuestaForm.opciones.map((op, i) => (
                 <input
                   key={i}
@@ -508,11 +517,14 @@ function Comunidad() {
               enviar('/api/solicitudes-admin', { method: 'POST', body: JSON.stringify(solicitudForm) }, '✓ Solicitud enviada')
                 .then(ok => ok && setSolicitudForm({ categoria: 'general', titulo: '', descripcion: '' }));
             }}>
-              <select className="modal-select" value={solicitudForm.categoria} onChange={e => setSolicitudForm({ ...solicitudForm, categoria: e.target.value })}>
+              <label className="modal-label" htmlFor="com-cat-sol">Categoría</label>
+              <select id="com-cat-sol" className="modal-select" value={solicitudForm.categoria} onChange={e => setSolicitudForm({ ...solicitudForm, categoria: e.target.value })}>
                 {CATEGORIAS.map(c => <option key={c} value={c}>{c.charAt(0).toUpperCase() + c.slice(1)}</option>)}
               </select>
-              <input placeholder="Título" value={solicitudForm.titulo} onChange={e => setSolicitudForm({ ...solicitudForm, titulo: e.target.value })} required />
-              <textarea className="modal-textarea" rows={4} placeholder="Describe tu solicitud" value={solicitudForm.descripcion} onChange={e => setSolicitudForm({ ...solicitudForm, descripcion: e.target.value })} required />
+              <label className="modal-label" htmlFor="com-titulo">Título</label>
+              <input id="com-titulo" placeholder="Título" value={solicitudForm.titulo} onChange={e => setSolicitudForm({ ...solicitudForm, titulo: e.target.value })} required />
+              <label className="modal-label" htmlFor="com-describe-tu-solicitud">Describe tu solicitud</label>
+              <textarea id="com-describe-tu-solicitud" className="modal-textarea" rows={4} placeholder="Describe tu solicitud" value={solicitudForm.descripcion} onChange={e => setSolicitudForm({ ...solicitudForm, descripcion: e.target.value })} required />
               {errorModal && <p className="modal-error">{errorModal}</p>}
               <div className="modal-actions">
                 <button type="button" className="btn-secondary" onClick={() => setModal(null)}>Cancelar</button>
@@ -532,16 +544,19 @@ function Comunidad() {
               enviar('/api/reservas', { method: 'POST', body: JSON.stringify(reservaForm) }, '✓ Reserva confirmada')
                 .then(ok => ok && setReservaForm({ amenidad_id: '', fecha: '', hora_inicio: '', hora_fin: '', notas: '' }));
             }}>
-              <select className="modal-select" value={reservaForm.amenidad_id} onChange={e => setReservaForm({ ...reservaForm, amenidad_id: e.target.value })} required>
+              <label className="modal-label" htmlFor="com-amenidad">Amenidad</label>
+              <select id="com-amenidad" className="modal-select" value={reservaForm.amenidad_id} onChange={e => setReservaForm({ ...reservaForm, amenidad_id: e.target.value })} required>
                 <option value="">Selecciona la amenidad...</option>
                 {amenidades.map(a => <option key={a.id} value={a.id}>{a.nombre}</option>)}
               </select>
-              <input type="date" value={reservaForm.fecha} onChange={e => setReservaForm({ ...reservaForm, fecha: e.target.value })} required />
+              <label className="modal-label" htmlFor="com-fecha-res">Fecha</label>
+              <input id="com-fecha-res" type="date" value={reservaForm.fecha} onChange={e => setReservaForm({ ...reservaForm, fecha: e.target.value })} required />
               <div className="hora-row">
                 <label>De <input type="time" value={reservaForm.hora_inicio} onChange={e => setReservaForm({ ...reservaForm, hora_inicio: e.target.value })} required /></label>
                 <label>a <input type="time" value={reservaForm.hora_fin} onChange={e => setReservaForm({ ...reservaForm, hora_fin: e.target.value })} required /></label>
               </div>
-              <input placeholder="Notas (opcional)" value={reservaForm.notas} onChange={e => setReservaForm({ ...reservaForm, notas: e.target.value })} />
+              <label className="modal-label" htmlFor="com-notas-opcional">Notas (opcional)</label>
+              <input id="com-notas-opcional" placeholder="Notas (opcional)" value={reservaForm.notas} onChange={e => setReservaForm({ ...reservaForm, notas: e.target.value })} />
               {errorModal && <p className="modal-error">{errorModal}</p>}
               <div className="modal-actions">
                 <button type="button" className="btn-secondary" onClick={() => setModal(null)}>Cancelar</button>
@@ -556,16 +571,18 @@ function Comunidad() {
         <div className="modal-overlay" onClick={() => setRespondiendo(null)}>
           <div className="modal-card" onClick={e => e.stopPropagation()}>
             <h2>Responder Solicitud</h2>
-            <p className="aviso-cuerpo" style={{ marginBottom: 14 }}>"{respondiendo.titulo}" — {respondiendo.propietario_nombre}</p>
+            <p className="aviso-cuerpo" style={{ marginBottom: 14 }}>"{respondiendo.titulo}" · {respondiendo.propietario_nombre}</p>
             <form onSubmit={e => {
               e.preventDefault();
               enviar(`/api/solicitudes-admin/${respondiendo.id}`, { method: 'PATCH', body: JSON.stringify(respuestaForm) }, '✓ Solicitud actualizada');
             }}>
-              <select className="modal-select" value={respuestaForm.estado} onChange={e => setRespuestaForm({ ...respuestaForm, estado: e.target.value })}>
+              <label className="modal-label" htmlFor="com-est-resp">Resolución</label>
+              <select id="com-est-resp" className="modal-select" value={respuestaForm.estado} onChange={e => setRespuestaForm({ ...respuestaForm, estado: e.target.value })}>
                 <option value="en_proceso">Marcar en proceso</option>
                 <option value="resuelta">Marcar resuelta</option>
               </select>
-              <textarea className="modal-textarea" rows={4} placeholder="Respuesta al vecino" value={respuestaForm.respuesta} onChange={e => setRespuestaForm({ ...respuestaForm, respuesta: e.target.value })} required />
+              <label className="modal-label" htmlFor="com-respuesta-al-vecino">Respuesta al vecino</label>
+              <textarea id="com-respuesta-al-vecino" className="modal-textarea" rows={4} placeholder="Respuesta al vecino" value={respuestaForm.respuesta} onChange={e => setRespuestaForm({ ...respuestaForm, respuesta: e.target.value })} required />
               {errorModal && <p className="modal-error">{errorModal}</p>}
               <div className="modal-actions">
                 <button type="button" className="btn-secondary" onClick={() => setRespondiendo(null)}>Cancelar</button>

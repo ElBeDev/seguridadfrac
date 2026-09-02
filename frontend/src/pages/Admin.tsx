@@ -432,7 +432,9 @@ function Admin() {
           <div className="modal-card" onClick={(e) => e.stopPropagation()}>
             <h2>Nuevo Usuario</h2>
             <form onSubmit={handleCrearUsuario}>
+              <label className="modal-label" htmlFor="adm-rol">Rol del usuario</label>
               <select
+                id="adm-rol"
                 className="modal-select"
                 value={nuevoForm.rol}
                 onChange={(e) => setNuevoForm({ ...nuevoForm, rol: e.target.value })}
@@ -440,32 +442,42 @@ function Admin() {
                 <option value="propietario">Propietario (requiere verificación)</option>
                 <option value="vigilancia">Vigilancia / caseta (activo de inmediato)</option>
               </select>
+              <label className="modal-label" htmlFor="adm-nombre-completo">Nombre completo</label>
               <input
+                id="adm-nombre-completo"
                 placeholder="Nombre completo"
                 value={nuevoForm.nombre_completo}
                 onChange={(e) => setNuevoForm({ ...nuevoForm, nombre_completo: e.target.value })}
                 required
               />
+              <label className="modal-label" htmlFor="adm-email">Email</label>
               <input
+                id="adm-email"
                 type="email"
                 placeholder="Email"
                 value={nuevoForm.email}
                 onChange={(e) => setNuevoForm({ ...nuevoForm, email: e.target.value })}
                 required
               />
+              <label className="modal-label" htmlFor="adm-telefono">Teléfono</label>
               <input
+                id="adm-telefono"
                 placeholder="Teléfono"
                 value={nuevoForm.telefono}
                 onChange={(e) => setNuevoForm({ ...nuevoForm, telefono: e.target.value })}
                 required
               />
+              <label className="modal-label" htmlFor="adm-direccion">Dirección</label>
               <input
+                id="adm-direccion"
                 placeholder="Dirección"
                 value={nuevoForm.direccion}
                 onChange={(e) => setNuevoForm({ ...nuevoForm, direccion: e.target.value })}
                 required
               />
+              <label className="modal-label" htmlFor="adm-contrasena-minimo-6-caracter">Contraseña (mínimo 6 caracteres)</label>
               <input
+                id="adm-contrasena-minimo-6-caracter"
                 type="password"
                 placeholder="Contraseña (mínimo 6 caracteres)"
                 value={nuevoForm.password}
@@ -490,18 +502,24 @@ function Admin() {
           <div className="modal-card" onClick={(e) => e.stopPropagation()}>
             <h2>Editar Usuario</h2>
             <form onSubmit={handleGuardarEdit}>
+              <label className="modal-label" htmlFor="adm-nombre-completo">Nombre completo</label>
               <input
+                id="adm-nombre-completo"
                 placeholder="Nombre completo"
                 value={editForm.nombre_completo}
                 onChange={(e) => setEditForm({ ...editForm, nombre_completo: e.target.value })}
                 required
               />
+              <label className="modal-label" htmlFor="adm-telefono">Teléfono</label>
               <input
+                id="adm-telefono"
                 placeholder="Teléfono"
                 value={editForm.telefono}
                 onChange={(e) => setEditForm({ ...editForm, telefono: e.target.value })}
               />
+              <label className="modal-label" htmlFor="adm-direccion">Dirección</label>
               <input
+                id="adm-direccion"
                 placeholder="Dirección"
                 value={editForm.direccion}
                 onChange={(e) => setEditForm({ ...editForm, direccion: e.target.value })}

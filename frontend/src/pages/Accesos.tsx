@@ -118,7 +118,7 @@ function Accesos() {
       if (response.ok) {
         setModal(null);
         setPaqueteForm({ propietario_id: '', descripcion: '', paqueteria: '' });
-        avisar('✓ Paquete registrado — el residente será notificado');
+        avisar('✓ Paquete registrado, se notificará al residente');
         await cargar();
       } else {
         setErrorModal((await response.json()).message || 'Error al registrar');
@@ -270,7 +270,7 @@ function Accesos() {
                 {paquetes.map(paquete => (
                   <tr key={paquete.id}>
                     <td>{paquete.descripcion}</td>
-                    <td>{paquete.paqueteria || '—'}</td>
+                    <td>{paquete.paqueteria || '-'}</td>
                     {esCaseta && <td>{paquete.propietario_nombre}</td>}
                     <td>{new Date(paquete.created_at).toLocaleDateString('es-MX', { day: 'numeric', month: 'short' })}</td>
                     <td>
@@ -303,6 +303,7 @@ function Accesos() {
           <div className="validar-row">
             <input
               className="validar-input"
+              aria-label="Código de acceso del pase"
               placeholder="V-XXXXXX"
               value={codigoInput}
               onChange={e => setCodigoInput(e.target.value.toUpperCase())}
@@ -316,7 +317,7 @@ function Accesos() {
               <div className="validar-info">
                 <h3>{validada.nombre_visitante}</h3>
                 <p>
-                  Visita a <strong>{validada.propietario_nombre}</strong>{validada.direccion ? ` — ${validada.direccion}` : ''}
+                  Visita a <strong>{validada.propietario_nombre}</strong>{validada.direccion ? ` · ${validada.direccion}` : ''}
                 </p>
                 <p className="aviso-meta">
                   Tipo: {validada.tipo} · Esperada: {new Date(validada.fecha_esperada).toLocaleDateString('es-MX')}
@@ -347,14 +348,18 @@ function Accesos() {
           <div className="modal-card" onClick={e => e.stopPropagation()}>
             <h2>Nuevo Pase de Visita</h2>
             <form onSubmit={crearVisita}>
-              <input placeholder="Nombre del visitante" value={visitaForm.nombre_visitante} onChange={e => setVisitaForm({ ...visitaForm, nombre_visitante: e.target.value })} required />
-              <select className="modal-select" value={visitaForm.tipo} onChange={e => setVisitaForm({ ...visitaForm, tipo: e.target.value })}>
+              <label className="modal-label" htmlFor="acc-nombre-del-visitante">Nombre del visitante</label>
+              <input id="acc-nombre-del-visitante" placeholder="Nombre del visitante" value={visitaForm.nombre_visitante} onChange={e => setVisitaForm({ ...visitaForm, nombre_visitante: e.target.value })} required />
+              <label className="modal-label" htmlFor="acc-tipo">Tipo de visita</label>
+              <select id="acc-tipo" className="modal-select" value={visitaForm.tipo} onChange={e => setVisitaForm({ ...visitaForm, tipo: e.target.value })}>
                 <option value="visita">Visita</option>
                 <option value="proveedor">Proveedor / servicio</option>
                 <option value="evento">Invitado a evento</option>
               </select>
-              <input type="date" value={visitaForm.fecha_esperada} onChange={e => setVisitaForm({ ...visitaForm, fecha_esperada: e.target.value })} />
-              <input placeholder="Notas (vehículo, señas, etc.)" value={visitaForm.notas} onChange={e => setVisitaForm({ ...visitaForm, notas: e.target.value })} />
+              <label className="modal-label" htmlFor="acc-fecha">Fecha esperada</label>
+              <input id="acc-fecha" type="date" value={visitaForm.fecha_esperada} onChange={e => setVisitaForm({ ...visitaForm, fecha_esperada: e.target.value })} />
+              <label className="modal-label" htmlFor="acc-notas-vehiculo-senas-etc">Notas (vehículo, señas, etc.)</label>
+              <input id="acc-notas-vehiculo-senas-etc" placeholder="Notas (vehículo, señas, etc.)" value={visitaForm.notas} onChange={e => setVisitaForm({ ...visitaForm, notas: e.target.value })} />
               {errorModal && <p className="modal-error">{errorModal}</p>}
               <div className="modal-actions">
                 <button type="button" className="btn-secondary" onClick={() => setModal(null)}>Cancelar</button>
@@ -387,12 +392,15 @@ function Accesos() {
           <div className="modal-card" onClick={e => e.stopPropagation()}>
             <h2>Registrar Paquete</h2>
             <form onSubmit={registrarPaquete}>
-              <select className="modal-select" value={paqueteForm.propietario_id} onChange={e => setPaqueteForm({ ...paqueteForm, propietario_id: e.target.value })} required>
+              <label className="modal-label" htmlFor="acc-residente">Residente</label>
+              <select id="acc-residente" className="modal-select" value={paqueteForm.propietario_id} onChange={e => setPaqueteForm({ ...paqueteForm, propietario_id: e.target.value })} required>
                 <option value="">Selecciona al residente...</option>
                 {propietarios.map(p => <option key={p.id} value={p.id}>{p.nombre_completo}</option>)}
               </select>
-              <input placeholder="Descripción (ej. caja mediana Amazon)" value={paqueteForm.descripcion} onChange={e => setPaqueteForm({ ...paqueteForm, descripcion: e.target.value })} required />
-              <input placeholder="Paquetería (DHL, Estafeta...)" value={paqueteForm.paqueteria} onChange={e => setPaqueteForm({ ...paqueteForm, paqueteria: e.target.value })} />
+              <label className="modal-label" htmlFor="acc-descripcion-ej-caja-mediana-">Descripción (ej. caja mediana Amazon)</label>
+              <input id="acc-descripcion-ej-caja-mediana-" placeholder="Descripción (ej. caja mediana Amazon)" value={paqueteForm.descripcion} onChange={e => setPaqueteForm({ ...paqueteForm, descripcion: e.target.value })} required />
+              <label className="modal-label" htmlFor="acc-paqueteria-dhl-estafeta">Paquetería (DHL, Estafeta...)</label>
+              <input id="acc-paqueteria-dhl-estafeta" placeholder="Paquetería (DHL, Estafeta...)" value={paqueteForm.paqueteria} onChange={e => setPaqueteForm({ ...paqueteForm, paqueteria: e.target.value })} />
               {errorModal && <p className="modal-error">{errorModal}</p>}
               <div className="modal-actions">
                 <button type="button" className="btn-secondary" onClick={() => setModal(null)}>Cancelar</button>

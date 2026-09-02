@@ -606,3 +606,33 @@
     padding: 1.5rem 1rem 2rem;
   }
 }
+
+/* Campos con label (formulario de registro) */
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.campo-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-text-light);
+}
+
+.star-icon {
+  color: #F59E0B;
+  vertical-align: -2px;
+}
+
+.service-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 20px;
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.18);
+}

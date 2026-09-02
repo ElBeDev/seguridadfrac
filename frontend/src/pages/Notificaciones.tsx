@@ -84,7 +84,7 @@ function Notificaciones() {
       <div className="page-header">
         <h1>Notificaciones</h1>
         <p className="subtitle">
-          Actividad reciente de tu comunidad{noLeidas > 0 ? ` — ${noLeidas} sin leer` : ''}
+          Actividad reciente de tu comunidad{noLeidas > 0 ? ` · ${noLeidas} sin leer` : ''}
         </p>
       </div>
 
@@ -110,7 +110,7 @@ function Notificaciones() {
               <text x="104" y="30" fontSize="14" fill="#94A3B8" fontFamily="inherit">z</text>
               <text x="112" y="20" fontSize="18" fill="#94A3B8" fontFamily="inherit">z</text>
             </svg>
-            <p>Todo tranquilo por aquí — no hay notificaciones</p>
+            <p>Todo tranquilo por aquí, no hay notificaciones</p>
           </div>
         ) : (
           <div className="notificaciones-list">

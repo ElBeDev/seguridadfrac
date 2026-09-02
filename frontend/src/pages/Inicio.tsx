@@ -7,24 +7,40 @@ import {
   FaUsers,
   FaUserCheck,
   FaStar,
-  FaTags
+  FaTags,
+  FaClock,
+  FaBroom,
+  FaSmile,
+  FaBullseye,
+  FaCheckCircle,
+  FaWrench,
+  FaPaintRoller,
+  FaBolt,
+  FaFire,
+  FaCouch,
+  FaHome,
+  FaSnowflake,
+  FaTemperatureLow,
+  FaTools,
+  FaHardHat,
+  FaUserNurse
 } from 'react-icons/fa';
 import { ZONAS } from '../config/branding';
 import './Inicio.css';
 
 const servicios = [
-  { value: "Cuidados Adultos", label: "🧑‍🦳 Cuidados Adultos" },
-  { value: "Plomeros", label: "🔧 Plomeros" },
-  { value: "Pintor", label: "🎨 Pintor" },
-  { value: "Electricistas", label: "💡 Electricistas" },
-  { value: "Gasistas", label: "🔥 Gasistas" },
-  { value: "Limpieza Alfombras", label: "🧼 Limpieza Alfombras" },
-  { value: "Limpieza Sillones", label: "🛋️ Limpieza Sillones" },
-  { value: "Limpieza de hogar", label: "🏠 Limpieza de hogar" },
-  { value: "Tecnico de Aires Acondicionados", label: "❄️ Tecnico de Aires Acondicionados" },
-  { value: "Tecnico de heladera", label: "🧊 Tecnico de heladera" },
-  { value: "Arreglos generales", label: "🛠️ Arreglos generales" },
-  { value: "Construcción - Maestros", label: "🏗️ Construcción - Maestros" }
+  { value: "Cuidados Adultos", icon: <FaUserNurse /> },
+  { value: "Plomeros", icon: <FaWrench /> },
+  { value: "Pintor", icon: <FaPaintRoller /> },
+  { value: "Electricistas", icon: <FaBolt /> },
+  { value: "Gasistas", icon: <FaFire /> },
+  { value: "Limpieza Alfombras", icon: <FaBroom /> },
+  { value: "Limpieza Sillones", icon: <FaCouch /> },
+  { value: "Limpieza de hogar", icon: <FaHome /> },
+  { value: "Tecnico de Aires Acondicionados", icon: <FaSnowflake /> },
+  { value: "Tecnico de heladera", icon: <FaTemperatureLow /> },
+  { value: "Arreglos generales", icon: <FaTools /> },
+  { value: "Construcción - Maestros", icon: <FaHardHat /> }
 ];
 
 const zonas = ZONAS;
@@ -457,7 +473,7 @@ function Inicio() {
                   <FaSearch className="buscar-icon" />
                   <input
                     type="text"
-                    placeholder="CURP, nombre o apellido"
+                    aria-label="Buscar empleado por CURP o nombre" placeholder="CURP, nombre o apellido"
                     value={dniBuscar}
                     onChange={(e) => setDniBuscar(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && buscarEmpleado()}
@@ -479,7 +495,7 @@ function Inicio() {
 
               {empleadoEncontrado && (
                 <div className="empleado-resultado">
-                  <h3>✅ Empleado Encontrado</h3>
+                  <h3><FaCheckCircle className="star-icon" /> Empleado Encontrado</h3>
                   <div className="empleado-info">
                     <div className="info-row">
                       <strong>CURP:</strong> {empleadoEncontrado.dni}
@@ -502,7 +518,7 @@ function Inicio() {
                     <div className="info-row">
                       <strong>Rating Promedio:</strong> 
                       <span className="rating-badge">
-                        ⭐ {calcularPromedioRating(empleadoEncontrado)}
+                        <FaStar className="star-icon" /> {calcularPromedioRating(empleadoEncontrado)}
                       </span>
                     </div>
                   </div>
@@ -527,37 +543,54 @@ function Inicio() {
                 <div className="form-column">
                   <h3>Información Personal</h3>
                   <div className="form-grid">
-                    <input
-                      type="text"
-                      placeholder="CURP *"
-                      value={formData.dni}
-                      onChange={(e) => setFormData({...formData, dni: e.target.value})}
-                    />
-                    <input
-                      type="text"
-                      placeholder="Teléfono"
-                      value={formData.telefono}
-                      onChange={(e) => setFormData({...formData, telefono: e.target.value})}
-                    />
-                    <input
-                      type="text"
-                      placeholder="Nombre *"
-                      value={formData.nombre}
-                      onChange={(e) => setFormData({...formData, nombre: e.target.value})}
-                    />
-                    <input
-                      type="text"
-                      placeholder="Apellido *"
-                      value={formData.apellido}
-                      onChange={(e) => setFormData({...formData, apellido: e.target.value})}
-                    />
-                    <input
-                      type="email"
-                      placeholder="Email"
-                      value={formData.email}
-                      onChange={(e) => setFormData({...formData, email: e.target.value})}
-                      style={{ gridColumn: '1 / -1' }}
-                    />
+                    <div className="campo">
+                      <label className="campo-label" htmlFor="reg-curp">CURP *</label>
+                      <input
+                        id="reg-curp"
+                        type="text"
+                        placeholder="18 caracteres"
+                        value={formData.dni}
+                        onChange={(e) => setFormData({...formData, dni: e.target.value})}
+                      />
+                    </div>
+                    <div className="campo">
+                      <label className="campo-label" htmlFor="reg-telefono">Teléfono</label>
+                      <input
+                        id="reg-telefono"
+                        type="text"
+                        placeholder="10 dígitos"
+                        value={formData.telefono}
+                        onChange={(e) => setFormData({...formData, telefono: e.target.value})}
+                      />
+                    </div>
+                    <div className="campo">
+                      <label className="campo-label" htmlFor="reg-nombre">Nombre *</label>
+                      <input
+                        id="reg-nombre"
+                        type="text"
+                        value={formData.nombre}
+                        onChange={(e) => setFormData({...formData, nombre: e.target.value})}
+                      />
+                    </div>
+                    <div className="campo">
+                      <label className="campo-label" htmlFor="reg-apellido">Apellido *</label>
+                      <input
+                        id="reg-apellido"
+                        type="text"
+                        value={formData.apellido}
+                        onChange={(e) => setFormData({...formData, apellido: e.target.value})}
+                      />
+                    </div>
+                    <div className="campo" style={{ gridColumn: '1 / -1' }}>
+                      <label className="campo-label" htmlFor="reg-email">Email</label>
+                      <input
+                        id="reg-email"
+                        type="email"
+                        placeholder="correo@ejemplo.com"
+                        value={formData.email}
+                        onChange={(e) => setFormData({...formData, email: e.target.value})}
+                      />
+                    </div>
                   </div>
 
                   <h3>Servicio</h3>
@@ -567,7 +600,7 @@ function Inicio() {
                   >
                     <option value="">Selecciona un servicio...</option>
                     {servicios.map(s => (
-                      <option key={s.value} value={s.value}>{s.label}</option>
+                      <option key={s.value} value={s.value}>{s.value}</option>
                     ))}
                   </select>
 
@@ -585,17 +618,17 @@ function Inicio() {
 
                 {/* Columna Derecha - Ratings */}
                 <div className="form-column">
-                  <h3>Calificaciones ⭐</h3>
+                  <h3><FaStar className="star-icon" /> Calificaciones</h3>
                   <div className="ratings-container">
                     {[
-                      { key: 'puntualidad' as const, label: 'Puntualidad', emoji: '⚡' },
-                      { key: 'limpieza' as const, label: 'Limpieza', emoji: '✨' },
-                      { key: 'personalidad' as const, label: 'Personalidad', emoji: '😊' },
-                      { key: 'calidad' as const, label: 'Calidad', emoji: '🎯' }
+                      { key: 'puntualidad' as const, label: 'Puntualidad', icon: <FaClock /> },
+                      { key: 'limpieza' as const, label: 'Limpieza', icon: <FaBroom /> },
+                      { key: 'personalidad' as const, label: 'Personalidad', icon: <FaSmile /> },
+                      { key: 'calidad' as const, label: 'Calidad', icon: <FaBullseye /> }
                     ].map((rating) => (
                       <div key={rating.key} className="rating-row">
                         <span className="rating-label">
-                          <span className="rating-emoji">{rating.emoji}</span>
+                          <span className="rating-emoji">{rating.icon}</span>
                           <span>{rating.label}</span>
                         </span>
                         <div className="star-container">
@@ -668,7 +701,7 @@ function Inicio() {
                 <div style={{ flex: '1 1 300px', position: 'relative' }}>
                   <FaSearch style={{ position: 'absolute', top: '12px', left: '12px', width: '20px', height: '20px', color: 'rgb(100, 116, 139)' }} />
                   <input
-                    placeholder="Buscar servicio"
+                    aria-label="Buscar servicio" placeholder="Buscar servicio"
                     value={buscarServicioTexto}
                     onChange={(e) => setBuscarServicioTexto(e.target.value)}
                     style={{ 
@@ -724,7 +757,6 @@ function Inicio() {
                       'linear-gradient(135deg, rgb(161, 140, 209) 0%, rgb(251, 194, 235) 100%)',
                     ];
                     const gradient = gradients[idx % gradients.length];
-                    const emoji = servicio.label.split(' ')[0];
                     
                     return (
                       <div 
@@ -733,7 +765,7 @@ function Inicio() {
                         style={{ background: gradient }}
                       >
                         <div className="service-card-inner">
-                          <div style={{ fontSize: '34px', lineHeight: '1' }}>{emoji}</div>
+                          <div className="service-icon" style={{ background: gradient }}>{servicio.icon}</div>
                           <h4>{servicio.value}</h4>
                           <p>{getServiceDescription(servicio.value)}</p>
                           <button 
@@ -761,7 +793,7 @@ function Inicio() {
                 <div style={{ flex: '1 1 300px', position: 'relative' }}>
                   <FaSearch style={{ position: 'absolute', top: '12px', left: '12px', width: '20px', height: '20px', color: 'rgb(100, 116, 139)' }} />
                   <input
-                    placeholder="Buscar empleado (CURP o nombre)"
+                    aria-label="Buscar empleado por CURP o nombre" placeholder="Buscar empleado (CURP o nombre)"
                     value={reporteData.empleadoBusqueda}
                     onChange={(e) => setReporteData({...reporteData, empleadoBusqueda: e.target.value})}
                     style={{ 

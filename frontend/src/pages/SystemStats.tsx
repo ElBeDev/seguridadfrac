@@ -293,7 +293,7 @@ function SystemStats() {
                   <span className="criterio-value">{c.value > 0 ? c.value.toFixed(1) : '—'}</span>
                 </div>
               ))}
-              <p className="criterio-scale">Escala 1–5 estrellas</p>
+              <p className="criterio-scale">Escala 1 a 5 estrellas</p>
             </div>
           )}
         </div>
@@ -302,7 +302,7 @@ function SystemStats() {
         <div className="chart-card chart-card-wide">
           <h2>Reportes por severidad</h2>
           {stats.totales.reportes === 0 ? (
-            <p className="chart-empty">No hay reportes — buena señal para tu comunidad.</p>
+            <p className="chart-empty">No hay reportes, buena señal para tu comunidad.</p>
           ) : (
             <div className="severidad-row">
               {SEVERIDAD.map(s => {

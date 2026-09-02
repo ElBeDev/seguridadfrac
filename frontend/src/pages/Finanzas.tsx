@@ -56,7 +56,7 @@ function GroupedColumns({ data }: { data: { label: string; ingresos: number; egr
         const hEgr = (d.egresos / max) * chartH;
         return (
           <g key={d.label}>
-            <title>{`${d.label} — ingresos ${mxn.format(d.ingresos)}, egresos ${mxn.format(d.egresos)}`}</title>
+            <title>{`${d.label}: ingresos ${mxn.format(d.ingresos)}, egresos ${mxn.format(d.egresos)}`}</title>
             {d.ingresos > 0 && <rect x={cx - barW - 1} y={padT + chartH - hIng} width={barW} height={hIng} rx={3} fill={COLOR_INGRESOS} />}
             {d.egresos > 0 && <rect x={cx + 1} y={padT + chartH - hEgr} width={barW} height={hEgr} rx={3} fill={COLOR_EGRESOS} />}
             <text x={cx} y={height - 8} textAnchor="middle" className="chart-label">{d.label}</text>
@@ -188,8 +188,8 @@ function Finanzas() {
           {!esAdmin && (
             <div className={`adeudo-banner ${adeudo > 0 ? 'con-adeudo' : 'al-corriente'}`}>
               {adeudo > 0
-                ? <><FaExclamationTriangle /> Adeudo actual: <strong>{mxn.format(adeudo)}</strong> — contacta a administración para liquidar</>
-                : <><FaMoneyBillWave /> Estás al corriente con tus cuotas 🎉</>}
+                ? <><FaExclamationTriangle /> Adeudo actual: <strong>{mxn.format(adeudo)}</strong> , contacta a administración para liquidar</>
+                : <><FaMoneyBillWave /> Estás al corriente con tus cuotas</>}
             </div>
           )}
           <div className="table-card">
@@ -213,7 +213,7 @@ function Finanzas() {
                   {cuotas.map(cuota => (
                     <tr key={cuota.id}>
                       <td>{cuota.concepto}</td>
-                      <td>{cuota.periodo || '—'}</td>
+                      <td>{cuota.periodo || '-'}</td>
                       {esAdmin && <td>{cuota.propietario_nombre}</td>}
                       <td className="monto-cell">{mxn.format(Number(cuota.monto))}</td>
                       <td>{new Date(cuota.vence).toLocaleDateString('es-MX', { day: 'numeric', month: 'short' })}</td>
@@ -328,7 +328,7 @@ function Finanzas() {
             </div>
           </div>
           <p className="aviso-meta" style={{ marginTop: 14, textAlign: 'center' }}>
-            Los pagos se registran manualmente por administración — la pasarela de pago en línea y facturación CFDI están en el roadmap.
+            Los pagos se registran manualmente por administración. La pasarela de pago en línea y la facturación CFDI están en el roadmap.
           </p>
         </>
       )}
@@ -345,14 +345,19 @@ function Finanzas() {
                 body: JSON.stringify({ ...cuotaForm, propietario_id: cuotaForm.propietario_id || null }),
               }, '✓ Cargo creado').then(ok => ok && setCuotaForm({ propietario_id: '', concepto: 'Cuota de mantenimiento', periodo: '', monto: '', vence: '' }));
             }}>
-              <select className="modal-select" value={cuotaForm.propietario_id} onChange={e => setCuotaForm({ ...cuotaForm, propietario_id: e.target.value })}>
+              <label className="modal-label" htmlFor="fin-dest">Aplicar a</label>
+              <select id="fin-dest" className="modal-select" value={cuotaForm.propietario_id} onChange={e => setCuotaForm({ ...cuotaForm, propietario_id: e.target.value })}>
                 <option value="">Todos los propietarios verificados</option>
                 {propietarios.map(p => <option key={p.id} value={p.id}>{p.nombre_completo}</option>)}
               </select>
-              <input placeholder="Concepto" value={cuotaForm.concepto} onChange={e => setCuotaForm({ ...cuotaForm, concepto: e.target.value })} required />
-              <input type="month" value={cuotaForm.periodo} onChange={e => setCuotaForm({ ...cuotaForm, periodo: e.target.value })} />
-              <input type="number" min="1" step="0.01" placeholder="Monto (MXN)" value={cuotaForm.monto} onChange={e => setCuotaForm({ ...cuotaForm, monto: e.target.value })} required />
-              <input type="date" value={cuotaForm.vence} onChange={e => setCuotaForm({ ...cuotaForm, vence: e.target.value })} required />
+              <label className="modal-label" htmlFor="fin-concepto">Concepto</label>
+              <input id="fin-concepto" placeholder="Concepto" value={cuotaForm.concepto} onChange={e => setCuotaForm({ ...cuotaForm, concepto: e.target.value })} required />
+              <label className="modal-label" htmlFor="fin-periodo">Periodo</label>
+              <input id="fin-periodo" type="month" value={cuotaForm.periodo} onChange={e => setCuotaForm({ ...cuotaForm, periodo: e.target.value })} />
+              <label className="modal-label" htmlFor="fin-monto-mxn">Monto (MXN)</label>
+              <input id="fin-monto-mxn" type="number" min="1" step="0.01" placeholder="Monto (MXN)" value={cuotaForm.monto} onChange={e => setCuotaForm({ ...cuotaForm, monto: e.target.value })} required />
+              <label className="modal-label" htmlFor="fin-vence">Fecha de vencimiento</label>
+              <input id="fin-vence" type="date" value={cuotaForm.vence} onChange={e => setCuotaForm({ ...cuotaForm, vence: e.target.value })} required />
               {errorModal && <p className="modal-error">{errorModal}</p>}
               <div className="modal-actions">
                 <button type="button" className="btn-secondary" onClick={() => setModal(null)}>Cancelar</button>
@@ -375,7 +380,8 @@ function Finanzas() {
               e.preventDefault();
               enviar(`/api/finanzas/cuotas/${pagando.id}/pagar`, { method: 'PATCH', body: JSON.stringify({ metodo_pago: metodoPago }) }, '✓ Pago registrado');
             }}>
-              <select className="modal-select" value={metodoPago} onChange={e => setMetodoPago(e.target.value)}>
+              <label className="modal-label" htmlFor="fin-metodo">Método de pago</label>
+              <select id="fin-metodo" className="modal-select" value={metodoPago} onChange={e => setMetodoPago(e.target.value)}>
                 <option value="transferencia">Transferencia</option>
                 <option value="efectivo">Efectivo</option>
                 <option value="tarjeta">Tarjeta</option>
@@ -400,17 +406,22 @@ function Finanzas() {
               enviar('/api/finanzas/egresos', { method: 'POST', body: JSON.stringify({ ...egresoForm, fecha: egresoForm.fecha || null }) }, '✓ Egreso registrado')
                 .then(ok => ok && setEgresoForm({ concepto: '', categoria: 'general', monto: '', fecha: '', notas: '' }));
             }}>
-              <input placeholder="Concepto" value={egresoForm.concepto} onChange={e => setEgresoForm({ ...egresoForm, concepto: e.target.value })} required />
-              <select className="modal-select" value={egresoForm.categoria} onChange={e => setEgresoForm({ ...egresoForm, categoria: e.target.value })}>
+              <label className="modal-label" htmlFor="fin-concepto">Concepto</label>
+              <input id="fin-concepto" placeholder="Concepto" value={egresoForm.concepto} onChange={e => setEgresoForm({ ...egresoForm, concepto: e.target.value })} required />
+              <label className="modal-label" htmlFor="fin-cat-egr">Categoría</label>
+              <select id="fin-cat-egr" className="modal-select" value={egresoForm.categoria} onChange={e => setEgresoForm({ ...egresoForm, categoria: e.target.value })}>
                 <option value="general">General</option>
                 <option value="mantenimiento">Mantenimiento</option>
                 <option value="seguridad">Seguridad</option>
                 <option value="jardineria">Jardinería</option>
                 <option value="administracion">Administración</option>
               </select>
-              <input type="number" min="1" step="0.01" placeholder="Monto (MXN)" value={egresoForm.monto} onChange={e => setEgresoForm({ ...egresoForm, monto: e.target.value })} required />
-              <input type="date" value={egresoForm.fecha} onChange={e => setEgresoForm({ ...egresoForm, fecha: e.target.value })} />
-              <input placeholder="Notas (opcional)" value={egresoForm.notas} onChange={e => setEgresoForm({ ...egresoForm, notas: e.target.value })} />
+              <label className="modal-label" htmlFor="fin-monto-mxn">Monto (MXN)</label>
+              <input id="fin-monto-mxn" type="number" min="1" step="0.01" placeholder="Monto (MXN)" value={egresoForm.monto} onChange={e => setEgresoForm({ ...egresoForm, monto: e.target.value })} required />
+              <label className="modal-label" htmlFor="fin-fecha-egr">Fecha del egreso</label>
+              <input id="fin-fecha-egr" type="date" value={egresoForm.fecha} onChange={e => setEgresoForm({ ...egresoForm, fecha: e.target.value })} />
+              <label className="modal-label" htmlFor="fin-notas-opcional">Notas (opcional)</label>
+              <input id="fin-notas-opcional" placeholder="Notas (opcional)" value={egresoForm.notas} onChange={e => setEgresoForm({ ...egresoForm, notas: e.target.value })} />
               {errorModal && <p className="modal-error">{errorModal}</p>}
               <div className="modal-actions">
                 <button type="button" className="btn-secondary" onClick={() => setModal(null)}>Cancelar</button>
