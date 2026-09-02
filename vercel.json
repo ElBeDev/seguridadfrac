@@ -19,6 +19,10 @@
       }
     },
     {
+      "source": "/((?!api|.*\\..*).*)",
+      "destination": "/"
+    },
+    {
       "source": "/(.*)",
       "destination": {
         "type": "service",
