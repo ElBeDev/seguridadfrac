@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaUserPlus, FaEye, FaSearch, FaUserEdit, FaStar } from 'react-icons/fa';
+import { FaUserPlus, FaEye, FaSearch, FaUserEdit, FaStar, FaUsers } from 'react-icons/fa';
 import './Empleados.css';
+import { APP_NAME } from '../config/branding';
 
 interface Empleado {
   id?: number;
@@ -210,7 +211,11 @@ function Empleados(): React.ReactNode {
   return (
     <div className="empleados-page">
       <div className="header-card">
-        <h1>Gestión de Empleados</h1>
+        <div className="page-crumb">{APP_NAME} · Empleados</div>
+        <div className="header-title-row">
+          <span className="page-icon" style={{ background: '#E0F2FE', color: '#0284C7' }}><FaUsers /></span>
+          <h1>Gestión de Empleados</h1>
+        </div>
         <p className="subtitle">Administra y consulta información de empleados</p>
       </div>
 

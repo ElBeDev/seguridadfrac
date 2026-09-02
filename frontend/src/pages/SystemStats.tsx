@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { FaUsers, FaStar, FaClipboardList, FaUserShield, FaExclamationTriangle, FaExclamationCircle, FaExclamation } from 'react-icons/fa';
+import { FaUsers, FaStar, FaClipboardList, FaUserShield, FaExclamationTriangle, FaExclamationCircle, FaExclamation, FaChartBar } from 'react-icons/fa';
 import './SystemStats.css';
+import { APP_NAME } from '../config/branding';
 
 /*
  * Colores de gráficas (validados con el validador de paleta del sistema):
@@ -152,7 +153,11 @@ function SystemStats() {
   if (error) {
     return (
       <div className="stats-page">
-        <div className="page-header stats-header"><div><h1>Estadísticas</h1><p className="subtitle">{error}</p></div></div>
+        <div className="page-crumb">{APP_NAME} · Estadísticas</div>
+        <div className="header-title-row">
+          <span className="page-icon" style={{ background: '#EDE9FE', color: '#7C3AED' }}><FaChartBar /></span>
+          <h1>Estadísticas</h1>
+        </div>
       </div>
     );
   }

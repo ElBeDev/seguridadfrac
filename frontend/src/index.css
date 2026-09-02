@@ -14,14 +14,14 @@
   --grad-brand-soft: linear-gradient(135deg, rgba(16,185,129,0.12), rgba(14,165,233,0.12));
 
   /* ---- Superficies ---- */
-  --color-bg: #F1F5F9;               /* fondo del contenido */
+  --color-bg: #EFF1F4;               /* fondo del contenido */
   --color-surface: #FFFFFF;          /* tarjetas */
   --color-sidebar: #0F172A;          /* sidebar oscuro */
   --color-sidebar-2: #14532D00;      /* (reservado) */
   --color-ink: #0F172A;              /* texto fuerte */
   --color-text: #334155;             /* texto normal */
   --color-text-light: #64748B;       /* texto secundario */
-  --color-border: #E2E8F0;
+  --color-border: #EBEEF2;
   --color-table-header: #F8FAFC;
 
   /* ---- Semánticos ---- */
@@ -48,10 +48,10 @@
   --radius-card: 18px;
   --radius-btn: 10px;
   --radius-pill: 999px;
-  --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px rgba(15, 23, 42, 0.06);
+  --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04), 0 6px 20px rgba(15, 23, 42, 0.05);
   --shadow-card-hover: 0 2px 4px rgba(15, 23, 42, 0.06), 0 14px 34px rgba(15, 23, 42, 0.10);
   --shadow-modal: 0 24px 64px rgba(15, 23, 42, 0.25);
-  --sidebar-width: 240px;
+  --sidebar-width: 260px;
   --z-modal: 1000;
 }
 
@@ -119,4 +119,30 @@ input, select, textarea {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* ---- Header de página (breadcrumb + título con chip) ---- */
+.page-crumb {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-light);
+  margin-bottom: 10px;
+  letter-spacing: 0.01em;
+}
+
+.header-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.page-icon {
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
 }

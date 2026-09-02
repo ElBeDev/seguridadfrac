@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { FaBullhorn, FaCalendarAlt, FaPoll, FaInbox, FaPlus, FaTrash, FaLock, FaSwimmingPool, FaPaperclip } from 'react-icons/fa';
 import './Modulos.css';
+import { APP_NAME } from '../config/branding';
 
 type TabKey = 'avisos' | 'eventos' | 'encuestas' | 'solicitudes' | 'reservas';
 
@@ -171,7 +172,11 @@ function Comunidad() {
   return (
     <div className="modulo-page">
       <div className="header-card">
-        <h1>Comunidad</h1>
+        <div className="page-crumb">{APP_NAME} · Comunidad</div>
+        <div className="header-title-row">
+          <span className="page-icon" style={{ background: '#EDE9FE', color: '#7C3AED' }}><FaBullhorn /></span>
+          <h1>Comunidad</h1>
+        </div>
         <p className="subtitle">Avisos, eventos, encuestas y solicitudes de tu fraccionamiento</p>
       </div>
 

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { FaUserShield, FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaUndo, FaClipboardList } from 'react-icons/fa';
+import { FaUserShield, FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaUndo, FaClipboardList, FaShieldAlt } from 'react-icons/fa';
 import './Admin.css';
+import { APP_NAME } from '../config/branding';
 
 interface Usuario {
   id: number;
@@ -237,7 +238,11 @@ function Admin() {
     <div className="admin-page">
       <div className="page-header">
         <div>
-          <h1>Panel de Administración</h1>
+          <div className="page-crumb">{APP_NAME} · Admin</div>
+          <div className="header-title-row">
+            <span className="page-icon" style={{ background: '#D1FAE5', color: '#059669' }}><FaShieldAlt /></span>
+            <h1>Panel de Administración</h1>
+          </div>
           <p className="subtitle">Gestión de usuarios del sistema</p>
         </div>
         <button className="btn-primary" onClick={() => { setShowNuevo(true); setErrorNuevo(''); }}>

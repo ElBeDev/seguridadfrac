@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { FaFileInvoiceDollar, FaReceipt, FaChartPie, FaPlus, FaMoneyBillWave, FaExclamationTriangle, FaWallet, FaArrowDown } from 'react-icons/fa';
 import './Modulos.css';
+import { APP_NAME } from '../config/branding';
 
 type TabKey = 'cuotas' | 'egresos' | 'resumen';
 
@@ -151,7 +152,11 @@ function Finanzas() {
   return (
     <div className="modulo-page">
       <div className="header-card">
-        <h1>Finanzas</h1>
+        <div className="page-crumb">{APP_NAME} · Finanzas</div>
+        <div className="header-title-row">
+          <span className="page-icon" style={{ background: '#FEF3C7', color: '#B45309' }}><FaWallet /></span>
+          <h1>Finanzas</h1>
+        </div>
         <p className="subtitle">
           {esAdmin ? 'Cuotas, egresos y salud financiera del fraccionamiento' : 'Tu estado de cuenta con la comunidad'}
         </p>

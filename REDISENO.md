@@ -125,3 +125,22 @@ sistema visual nuevo.
   decisión de producto.
 - Notificaciones no tienen push/tiempo real — se calculan al cargar la
   página.
+
+---
+
+# Fase 3 visual — "Pro pass" estilo Azure Security (2026-09-02)
+
+Referencia del usuario: dribbble.com/shots/23535219 (Microsoft Azure
+Security Management). Su verde vivo mapea directo a nuestro esmeralda.
+
+- Sidebar reescrito a claro (blanco): buscador de secciones funcional
+  (filtra la navegación), grid 2x2 de accesos rápidos con el activo en
+  esmeralda sólido, listas compactas por sección, y tarjeta de usuario
+  con avatar + email + logout. Ancho 240→260px.
+- Headers de página: breadcrumb (APP_NAME · Sección) + chip de icono
+  tintado junto al título, sobre un lavado pastel multicolor
+  (esmeralda/violeta/cian) también aplicado al tope del contenido.
+- Look más flat: bordes casi invisibles (#EBEEF2), sombras finas, glow
+  de botones reducido a 2-4px en todo el panel (la landing conserva su
+  drama porque es marketing).
+- Vigilancia: un solo tile grande de Accesos, sin secciones.

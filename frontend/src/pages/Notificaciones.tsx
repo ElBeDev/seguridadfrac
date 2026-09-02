@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { FaBell, FaCheckCircle, FaExclamationTriangle, FaCheckDouble } from 'react-icons/fa';
 import './Notificaciones.css';
+import { APP_NAME } from '../config/branding';
 
 interface Notificacion {
   id: string;
@@ -82,7 +83,11 @@ function Notificaciones() {
   return (
     <div className="notificaciones-page">
       <div className="page-header">
-        <h1>Notificaciones</h1>
+        <div className="page-crumb">{APP_NAME} · Notificaciones</div>
+        <div className="header-title-row">
+          <span className="page-icon" style={{ background: '#E0F2FE', color: '#0284C7' }}><FaBell /></span>
+          <h1>Notificaciones</h1>
+        </div>
         <p className="subtitle">
           Actividad reciente de tu comunidad{noLeidas > 0 ? ` · ${noLeidas} sin leer` : ''}
         </p>

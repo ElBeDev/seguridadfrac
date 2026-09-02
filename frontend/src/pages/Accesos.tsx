@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { FaIdBadge, FaBoxOpen, FaQrcode, FaPlus, FaSignInAlt, FaSignOutAlt, FaSearch } from 'react-icons/fa';
 import QRCode from 'qrcode';
 import './Modulos.css';
+import { APP_NAME } from '../config/branding';
 
 type TabKey = 'visitas' | 'paqueteria' | 'validar';
 
@@ -168,7 +169,11 @@ function Accesos() {
   return (
     <div className="modulo-page">
       <div className="header-card">
-        <h1>Control de Accesos</h1>
+        <div className="page-crumb">{APP_NAME} · Accesos</div>
+        <div className="header-title-row">
+          <span className="page-icon" style={{ background: '#D1FAE5', color: '#059669' }}><FaIdBadge /></span>
+          <h1>Control de Accesos</h1>
+        </div>
         <p className="subtitle">Pases de visita con código, validación en caseta y paquetería</p>
       </div>
 
