@@ -21,15 +21,26 @@ const upload = multer({
   },
 });
 
+// El SDK autentica con BLOB_READ_WRITE_TOKEN (token clásico) o con
+// OIDC + BLOB_STORE_ID (lo que inyecta la integración nueva de Vercel).
+const hayBlob = () => Boolean(process.env.BLOB_READ_WRITE_TOKEN || process.env.BLOB_STORE_ID);
+
 async function guardarAdjunto(file) {
   const nombre = `${crypto.randomBytes(12).toString('hex')}${path.extname(file.originalname).toLowerCase()}`;
-  if (process.env.BLOB_READ_WRITE_TOKEN) {
-    const { put } = require('@vercel/blob');
-    const blob = await put(`avisos/${nombre}`, file.buffer, {
-      access: 'public',
-      contentType: file.mimetype,
-    });
-    return blob.url;
+  if (hayBlob()) {
+    try {
+      const { put } = require('@vercel/blob');
+      const blob = await put(`avisos/${nombre}`, file.buffer, {
+        access: 'public',
+        contentType: file.mimetype,
+      });
+      return blob.url;
+    } catch (err) {
+      // En Vercel el disco es efímero: mejor fallar claro que degradar.
+      // En local (env vars pulled sin OIDC válido) sí caemos a disco.
+      if (process.env.VERCEL) throw err;
+      console.error('Blob no disponible en local, usando disco:', err.message);
+    }
   }
   fs.writeFileSync(path.join(UPLOADS_DIR, nombre), file.buffer);
   return `/api/uploads/${nombre}`;
@@ -38,7 +49,7 @@ async function guardarAdjunto(file) {
 async function borrarAdjunto(adjunto) {
   if (!adjunto) return;
   try {
-    if (adjunto.startsWith('https://') && process.env.BLOB_READ_WRITE_TOKEN) {
+    if (adjunto.startsWith('https://') && hayBlob()) {
       const { del } = require('@vercel/blob');
       await del(adjunto);
     } else if (adjunto.startsWith('/api/uploads/')) {
