@@ -3,6 +3,7 @@ import { FaIdBadge, FaBoxOpen, FaQrcode, FaPlus, FaSignInAlt, FaSignOutAlt, FaSe
 import QRCode from 'qrcode';
 import './Modulos.css';
 import { APP_NAME } from '../config/branding';
+import { ToastMsg } from '../components/Toast';
 
 type TabKey = 'visitas' | 'paqueteria' | 'validar';
 
@@ -200,7 +201,7 @@ function Accesos() {
         </div>
       </div>
 
-      {toast && <div className="modulo-toast">{toast}</div>}
+      {toast && <div className="modulo-toast"><ToastMsg texto={toast} /></div>}
 
       {/* ---- VISITAS ---- */}
       {activeTab === 'visitas' && (

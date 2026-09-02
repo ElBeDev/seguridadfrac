@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { FaFileInvoiceDollar, FaReceipt, FaChartPie, FaPlus, FaMoneyBillWave, FaExclamationTriangle, FaWallet, FaArrowDown } from 'react-icons/fa';
 import './Modulos.css';
 import { APP_NAME } from '../config/branding';
+import { ToastMsg } from '../components/Toast';
 
 type TabKey = 'cuotas' | 'egresos' | 'resumen';
 
@@ -185,7 +186,7 @@ function Finanzas() {
         </div>
       </div>
 
-      {toast && <div className="modulo-toast">{toast}</div>}
+      {toast && <div className="modulo-toast"><ToastMsg texto={toast} /></div>}
 
       {/* ---- CUOTAS ---- */}
       {activeTab === 'cuotas' && (

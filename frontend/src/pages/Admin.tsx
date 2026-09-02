@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { FaUserShield, FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaUndo, FaClipboardList, FaShieldAlt } from 'react-icons/fa';
 import './Admin.css';
 import { APP_NAME } from '../config/branding';
+import { ToastMsg } from '../components/Toast';
 
 interface Usuario {
   id: number;
@@ -250,7 +251,7 @@ function Admin() {
         </button>
       </div>
 
-      {mensaje && <div className="admin-toast">{mensaje}</div>}
+      {mensaje && <div className="admin-toast"><ToastMsg texto={mensaje} /></div>}
 
       <div className="admin-container">
         <div className="users-card">

@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { FaBullhorn, FaCalendarAlt, FaPoll, FaInbox, FaPlus, FaTrash, FaLock, FaSwimmingPool, FaPaperclip } from 'react-icons/fa';
 import './Modulos.css';
 import { APP_NAME } from '../config/branding';
+import { ToastMsg } from '../components/Toast';
 
 type TabKey = 'avisos' | 'eventos' | 'encuestas' | 'solicitudes' | 'reservas';
 
@@ -197,7 +198,7 @@ function Comunidad() {
         </div>
       </div>
 
-      {toast && <div className="modulo-toast">{toast}</div>}
+      {toast && <div className="modulo-toast"><ToastMsg texto={toast} /></div>}
 
       {/* ---- AVISOS ---- */}
       {activeTab === 'avisos' && (

@@ -23,10 +23,12 @@ import {
   FaTemperatureLow,
   FaTools,
   FaHardHat,
-  FaUserNurse
+  FaUserNurse,
+  FaCheck
 } from 'react-icons/fa';
 import { ZONAS } from '../config/branding';
 import './Inicio.css';
+import { ToastMsg } from '../components/Toast';
 
 const servicios = [
   { value: "Cuidados Adultos", icon: <FaUserNurse /> },
@@ -642,7 +644,7 @@ function Inicio() {
                                   color: star <= formData.ratings[rating.key] ? '#33b398' : '#d1d5db'
                                 }}
                               >
-                                ★
+                                <FaStar />
                               </button>
                             </div>
                           ))}
@@ -671,9 +673,13 @@ function Inicio() {
                   background: mensajeRegistro.includes('✓') ? '#d1fae5' : '#fee2e2',
                   color: mensajeRegistro.includes('✓') ? '#065f46' : '#991b1b',
                   textAlign: 'center',
-                  fontWeight: '600'
+                  fontWeight: '600',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px'
                 }}>
-                  {mensajeRegistro}
+                  <ToastMsg texto={mensajeRegistro} />
                 </div>
               )}
 
@@ -684,7 +690,7 @@ function Inicio() {
                   disabled={enviandoRegistro}
                   style={{ opacity: enviandoRegistro ? 0.6 : 1 }}
                 >
-                  {enviandoRegistro ? 'ENVIANDO...' : '✓ REGISTRAR EMPLEADO'}
+                  {enviandoRegistro ? 'ENVIANDO...' : <><FaCheck /> REGISTRAR EMPLEADO</>}
                 </button>
               </div>
             </>
@@ -885,9 +891,13 @@ function Inicio() {
                   background: mensajeReporte.includes('✓') ? '#d1fae5' : '#fee2e2',
                   color: mensajeReporte.includes('✓') ? '#065f46' : '#991b1b',
                   textAlign: 'center',
-                  fontWeight: '600'
+                  fontWeight: '600',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px'
                 }}>
-                  {mensajeReporte}
+                  <ToastMsg texto={mensajeReporte} />
                 </div>
               )}
 

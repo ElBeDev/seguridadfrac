@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { FaUserPlus, FaEye, FaSearch, FaUserEdit, FaStar, FaUsers } from 'react-icons/fa';
 import './Empleados.css';
 import { APP_NAME } from '../config/branding';
+import { ToastMsg } from '../components/Toast';
 
 interface Empleado {
   id?: number;
@@ -410,7 +411,7 @@ function Empleados(): React.ReactNode {
         )}
       </div>
 
-      {toast && <div className="empleados-toast">{toast}</div>}
+      {toast && <div className="empleados-toast"><ToastMsg texto={toast} /></div>}
 
       {/* Modal Ver detalle */}
       {verDetalle && (
