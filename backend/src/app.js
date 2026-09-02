@@ -4,10 +4,8 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 
 const rateLimit = require('express-rate-limit');
-const dotenv = require('dotenv');
-dotenv.config();
-
-
+// dotenv se carga solo en local desde src/server.js — aquí no, porque el
+// bundler de Vercel lo externaliza y truena en runtime.
 const path = require('path');
 
 const app = express();
