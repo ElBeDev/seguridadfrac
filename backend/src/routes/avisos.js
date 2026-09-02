@@ -1,28 +1,54 @@
 const express = require('express');
 const router = express.Router();
 const path = require('path');
+const fs = require('fs');
 const crypto = require('crypto');
 const multer = require('multer');
 const { verifyAdmin, verifyPropietario } = require('../middlewares/auth');
 const pool = require('../config/db');
-
-// Adjuntos: PDF o imagen, máx 5MB, servidos en /api/uploads.
 const { UPLOADS_DIR } = require('../config/uploads');
 
-const storage = multer.diskStorage({
-  destination: UPLOADS_DIR,
-  filename: (req, file, cb) => {
-    cb(null, `${crypto.randomBytes(12).toString('hex')}${path.extname(file.originalname).toLowerCase()}`);
-  },
-});
+// Adjuntos: PDF o imagen. Con BLOB_READ_WRITE_TOKEN (Vercel Blob) van al
+// blob store y la URL es permanente/CDN; sin token (dev local) caen a
+// disco en UPLOADS_DIR servidos por /api/uploads. Límite 4MB: las
+// funciones de Vercel capan el body a ~4.5MB.
 const upload = multer({
-  storage,
-  limits: { fileSize: 5 * 1024 * 1024 },
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 4 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     const ok = ['application/pdf', 'image/png', 'image/jpeg', 'image/webp'].includes(file.mimetype);
-    cb(ok ? null : new Error('Solo se aceptan PDF o imágenes (png/jpg/webp)'), ok);
+    cb(ok ? null : new Error('Solo se aceptan PDF o imágenes (png/jpg/webp) de máximo 4MB'), ok);
   },
 });
+
+async function guardarAdjunto(file) {
+  const nombre = `${crypto.randomBytes(12).toString('hex')}${path.extname(file.originalname).toLowerCase()}`;
+  if (process.env.BLOB_READ_WRITE_TOKEN) {
+    const { put } = require('@vercel/blob');
+    const blob = await put(`avisos/${nombre}`, file.buffer, {
+      access: 'public',
+      contentType: file.mimetype,
+    });
+    return blob.url;
+  }
+  fs.writeFileSync(path.join(UPLOADS_DIR, nombre), file.buffer);
+  return `/api/uploads/${nombre}`;
+}
+
+async function borrarAdjunto(adjunto) {
+  if (!adjunto) return;
+  try {
+    if (adjunto.startsWith('https://') && process.env.BLOB_READ_WRITE_TOKEN) {
+      const { del } = require('@vercel/blob');
+      await del(adjunto);
+    } else if (adjunto.startsWith('/api/uploads/')) {
+      fs.unlinkSync(path.join(UPLOADS_DIR, path.basename(adjunto)));
+    }
+  } catch (err) {
+    // El aviso se borra aunque el archivo huérfano no se pueda limpiar
+    console.error('No se pudo borrar el adjunto:', err.message);
+  }
+}
 
 // Feed de comunicados (cualquier usuario autenticado)
 router.get('/', verifyPropietario, async (req, res) => {
@@ -46,11 +72,12 @@ router.post('/', verifyAdmin, (req, res) => {
     try {
       const { titulo, cuerpo, prioridad } = req.body;
       if (!titulo || !cuerpo) return res.status(400).json({ message: 'Título y cuerpo son requeridos' });
+      const adjunto = req.file ? await guardarAdjunto(req.file) : null;
       const { rows } = await pool.query(
         'INSERT INTO avisos (titulo, cuerpo, prioridad, adjunto, adjunto_nombre, creado_por) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *',
         [
           titulo, cuerpo, prioridad || 'normal',
-          req.file ? `/api/uploads/${req.file.filename}` : null,
+          adjunto,
           req.file ? req.file.originalname : null,
           req.user.id,
         ]
@@ -62,11 +89,12 @@ router.post('/', verifyAdmin, (req, res) => {
   });
 });
 
-// Eliminar aviso (solo admin)
+// Eliminar aviso (solo admin) — limpia también su adjunto
 router.delete('/:id', verifyAdmin, async (req, res) => {
   try {
-    const { rowCount } = await pool.query('DELETE FROM avisos WHERE id=$1', [req.params.id]);
-    if (rowCount === 0) return res.status(404).json({ message: 'Aviso no encontrado' });
+    const { rows } = await pool.query('DELETE FROM avisos WHERE id=$1 RETURNING adjunto', [req.params.id]);
+    if (rows.length === 0) return res.status(404).json({ message: 'Aviso no encontrado' });
+    await borrarAdjunto(rows[0].adjunto);
     res.json({ ok: true });
   } catch (error) {
     res.status(500).json({ message: 'Error al eliminar aviso', error: error.message });
