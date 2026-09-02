@@ -137,12 +137,13 @@ Comunicación y Seguridad; ver "Fase 4" para lo que quedó de Pagos/CFDI).
 3. [ ] **Tiempo real** — notificaciones push/WebSocket (hoy se calculan
    al cargar). Candidato: SSE simple desde Express. Sin bloqueo externo,
    solo priorización.
-4. [~] **Deploy** — repo en GitHub (ElBeDev/seguridadfrac) y proyecto
-   **Vercel-ready**: `vercel.json` (API serverless + front estático),
-   pool con TLS para Postgres hosteado, uploads configurables
-   (`UPLOADS_DIR=/tmp/uploads`). Pasos y limitaciones en **DEPLOY.md**.
-   Falta del lado del usuario: crear la DB (Neon), setear env vars en
-   Vercel y correr schema + create-admin contra la DB de prod.
+4. [x] **Deploy** — EN PRODUCCIÓN: https://seguridadfrac-hazel.vercel.app
+   (Vercel multi-servicio: front Vite estático + Express serverless con
+   entrypoint ESM `backend/index.mjs`; DB Neon con la URL pooled;
+   `JWT_SECRET` y `DATABASE_URL` en env vars; bcryptjs en vez de bcrypt
+   nativo porque npm bloquea install scripts en el build). Admin de prod
+   creado; schema y seed de amenidades aplicados a Neon. Detalles y
+   limitaciones en DEPLOY.md.
 5. [ ] **Adjuntos persistentes en prod** — en Vercel van a /tmp
    (efímero); migrar a Vercel Blob o S3 cuando el deploy quede.
 
