@@ -1,0 +1,421 @@
+/* Estilos compartidos de los módulos de comunidad (Comunidad, Accesos, Finanzas).
+   Reutiliza clases globales de Empleados.css (.header-card, .unified-card, .tabs,
+   .table-card, .btn-nuevo, .btn-action), Admin.css (.modal-*, .estado-badge-admin,
+   .btn-primary/.btn-secondary) y SystemStats.css (.kpi-*, .chart-*, .criterio-*). */
+
+.modulo-page {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2.5rem 2rem 4rem;
+}
+
+.modulo-empty {
+  color: var(--color-text-light);
+  text-align: center;
+  padding: 24px 0;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.modulo-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #D1FAE5;
+  border: 1px solid #A7F3D0;
+  color: #065F46;
+  font-weight: 600;
+  padding: 12px 22px;
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-card-hover);
+  z-index: 1100;
+}
+
+.cards-column {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ---- Avisos ---- */
+.aviso-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-left: 4px solid var(--color-border);
+  border-radius: 14px;
+  padding: 18px 20px;
+  box-shadow: var(--shadow-card);
+}
+
+.aviso-card.prioridad-normal { border-left-color: #0EA5E9; }
+.aviso-card.prioridad-importante { border-left-color: #F59E0B; }
+.aviso-card.prioridad-urgente { border-left-color: #EF4444; }
+
+.aviso-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.aviso-top h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  flex: 1;
+}
+
+.prioridad-badge {
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.prioridad-badge.normal { background: #E0F2FE; color: #075985; }
+.prioridad-badge.importante { background: #FEF3C7; color: #92400E; }
+.prioridad-badge.urgente { background: #FEE2E2; color: #991B1B; }
+
+.aviso-cuerpo {
+  margin: 0 0 8px;
+  color: var(--color-text);
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+.aviso-meta {
+  margin: 0;
+  color: var(--color-text-light);
+  font-size: 0.78rem;
+}
+
+.btn-mini {
+  padding: 6px 9px;
+}
+
+.btn-mini-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px;
+  font-size: 0.82rem;
+  margin-top: 10px;
+}
+
+/* ---- Eventos ---- */
+.evento-card {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 16px 20px;
+  box-shadow: var(--shadow-card);
+}
+
+.evento-fecha {
+  flex-shrink: 0;
+  width: 60px;
+  height: 60px;
+  border-radius: 14px;
+  background: var(--grad-brand);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.1;
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
+}
+
+.evento-dia {
+  font-family: var(--font-title);
+  font-weight: 800;
+  font-size: 1.4rem;
+}
+
+.evento-mes {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.evento-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.evento-body h3 {
+  margin: 0 0 4px;
+  font-size: 1.02rem;
+}
+
+.evento-body p {
+  margin: 0 0 4px;
+  color: var(--color-text);
+  font-size: 0.88rem;
+}
+
+/* ---- Encuestas ---- */
+.encuesta-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.encuesta-top h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.encuesta-resultados {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.resultado-row {
+  display: grid;
+  grid-template-columns: minmax(140px, 1fr) 2fr 90px;
+  align-items: center;
+  gap: 12px;
+}
+
+.resultado-label {
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.resultado-track {
+  height: 12px;
+  background: #E8EDF3;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.resultado-fill {
+  height: 100%;
+  background: #059669;
+  border-radius: 6px;
+  transition: width 0.5s ease;
+}
+
+.resultado-valor {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--color-ink);
+  text-align: right;
+}
+
+.encuesta-votar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+  align-items: flex-start;
+}
+
+.voto-opcion {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.92rem;
+  color: var(--color-ink);
+  cursor: pointer;
+  padding: 8px 14px;
+  border: 1.5px solid var(--color-border);
+  border-radius: 10px;
+  width: 100%;
+  transition: all 0.15s;
+}
+
+.voto-opcion:hover {
+  border-color: var(--color-primary);
+}
+
+.voto-opcion input {
+  accent-color: var(--color-primary);
+}
+
+/* ---- Solicitudes ---- */
+.solicitud-respuesta {
+  background: rgba(16, 185, 129, 0.07);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 0.88rem;
+  color: var(--color-text);
+  margin-bottom: 10px;
+}
+
+/* ---- Visitas / paquetes ---- */
+.codigo-pill {
+  background: var(--color-sidebar);
+  color: #A7F3D0;
+  padding: 3px 10px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.visita-badge {
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.visita-badge.esperada { background: #FEF3C7; color: #92400E; }
+.visita-badge.ingresada { background: #D1FAE5; color: #065F46; }
+.visita-badge.salida { background: #E2E8F0; color: #475569; }
+.visita-badge.cancelada { background: #FEE2E2; color: #991B1B; }
+
+.btn-action-danger {
+  background: #FEE2E2;
+  color: #991B1B;
+}
+
+.btn-action-danger:hover {
+  box-shadow: 0 6px 14px rgba(239, 68, 68, 0.25);
+}
+
+/* Pase / QR */
+.pase-card {
+  text-align: center;
+}
+
+.pase-qr {
+  display: block;
+  margin: 10px auto;
+  border-radius: 14px;
+  border: 1px solid var(--color-border);
+  padding: 8px;
+  background: #fff;
+}
+
+.pase-codigo {
+  font-family: var(--font-title);
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: var(--color-ink);
+  margin-bottom: 8px;
+}
+
+/* Validador de caseta */
+.validar-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.validar-input {
+  flex: 1 1 220px;
+  padding: 13px 16px;
+  border-radius: 12px;
+  border: 1.5px solid var(--color-border);
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-ink);
+}
+
+.validar-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12);
+}
+
+.validar-resultado {
+  margin-top: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  border: 1.5px solid var(--color-border);
+  border-radius: 14px;
+  padding: 18px 20px;
+}
+
+.validar-resultado.esperada { border-color: rgba(245, 158, 11, 0.5); background: rgba(245, 158, 11, 0.05); }
+.validar-resultado.ingresada { border-color: rgba(16, 185, 129, 0.5); background: rgba(16, 185, 129, 0.05); }
+.validar-resultado.salida,
+.validar-resultado.cancelada { background: var(--color-table-header); }
+
+.validar-info h3 {
+  margin: 0 0 4px;
+}
+
+.validar-info p {
+  margin: 0 0 4px;
+  font-size: 0.9rem;
+  color: var(--color-text);
+}
+
+/* ---- Finanzas ---- */
+.monto-cell {
+  font-weight: 700;
+  color: var(--color-ink);
+}
+
+.cuota-badge {
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.cuota-badge.pagada { background: #D1FAE5; color: #065F46; }
+.cuota-badge.pendiente { background: #FEF3C7; color: #92400E; }
+.cuota-badge.vencida { background: #FEE2E2; color: #991B1B; }
+
+.adeudo-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  border-radius: 14px;
+  font-size: 0.95rem;
+  margin-bottom: 16px;
+  border: 1px solid;
+}
+
+.adeudo-banner.con-adeudo {
+  background: rgba(245, 158, 11, 0.08);
+  border-color: rgba(245, 158, 11, 0.35);
+  color: #92400E;
+}
+
+.adeudo-banner.al-corriente {
+  background: rgba(16, 185, 129, 0.08);
+  border-color: rgba(16, 185, 129, 0.35);
+  color: #065F46;
+}
+
+@media (max-width: 768px) {
+  .modulo-page {
+    padding: 1.5rem 1rem 2rem;
+  }
+
+  .table-card {
+    overflow-x: auto;
+  }
+
+  .resultado-row {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+}

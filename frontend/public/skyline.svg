@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 180" preserveAspectRatio="none">
+  <!-- Silueta de fraccionamiento: casas, bardas y árboles. Un solo color, se tiñe con opacity desde CSS -->
+  <g fill="#FFFFFF">
+    <!-- suelo -->
+    <rect x="0" y="168" width="1440" height="12"/>
+    <!-- casa 1 -->
+    <path d="M40 168 V120 H60 V104 L92 80 L124 104 V168 Z"/>
+    <rect x="100" y="136" width="14" height="32"/>
+    <!-- árbol -->
+    <circle cx="160" cy="140" r="18"/><rect x="156" y="150" width="8" height="18"/>
+    <!-- casa 2 (dos aguas) -->
+    <path d="M200 168 V112 L248 84 L296 112 V168 Z"/>
+    <rect x="236" y="132" width="24" height="36"/>
+    <!-- barda -->
+    <rect x="310" y="146" width="70" height="22"/>
+    <rect x="318" y="138" width="6" height="8"/><rect x="336" y="138" width="6" height="8"/><rect x="354" y="138" width="6" height="8"/><rect x="372" y="138" width="6" height="8"/>
+    <!-- casa 3 (moderna, techos planos escalonados) -->
+    <path d="M400 168 V100 H452 V168 Z"/>
+    <path d="M452 168 V120 H500 V168 Z"/>
+    <rect x="414" y="116" width="16" height="16"/><rect x="466" y="134" width="16" height="14"/>
+    <!-- árbol -->
+    <circle cx="530" cy="136" r="20"/><rect x="526" y="148" width="8" height="20"/>
+    <!-- caseta de vigilancia con pluma -->
+    <path d="M580 168 V126 H628 V168 Z"/>
+    <path d="M572 126 H636 V116 H572 Z"/>
+    <rect x="592" y="138" width="20" height="14"/>
+    <rect x="636" y="140" width="90" height="5" transform="rotate(-18 636 140)"/>
+    <!-- casa 4 -->
+    <path d="M760 168 V118 H782 V100 L816 76 L850 100 V168 Z"/>
+    <rect x="806" y="134" width="18" height="34"/>
+    <!-- árboles -->
+    <circle cx="890" cy="142" r="16"/><rect x="886" y="152" width="8" height="16"/>
+    <circle cx="926" cy="134" r="20"/><rect x="922" y="146" width="8" height="22"/>
+    <!-- casa 5 (dos pisos) -->
+    <path d="M970 168 V92 L1022 64 L1074 92 V168 Z"/>
+    <rect x="988" y="112" width="18" height="16"/><rect x="1038" y="112" width="18" height="16"/>
+    <rect x="1012" y="132" width="20" height="36"/>
+    <!-- barda -->
+    <rect x="1090" y="146" width="60" height="22"/>
+    <rect x="1098" y="138" width="6" height="8"/><rect x="1116" y="138" width="6" height="8"/><rect x="1134" y="138" width="6" height="8"/>
+    <!-- casa 6 -->
+    <path d="M1170 168 V114 L1214 88 L1258 114 V168 Z"/>
+    <rect x="1202" y="134" width="22" height="34"/>
+    <!-- árbol -->
+    <circle cx="1300" cy="138" r="18"/><rect x="1296" y="148" width="8" height="20"/>
+    <!-- casa 7 (esquina) -->
+    <path d="M1340 168 V122 H1394 V104 H1420 V168 Z"/>
+    <rect x="1354" y="138" width="16" height="14"/>
+  </g>
+</svg>
