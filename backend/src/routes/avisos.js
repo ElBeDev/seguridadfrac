@@ -6,9 +6,15 @@ const multer = require('multer');
 const { verifyAdmin, verifyPropietario } = require('../middlewares/auth');
 const pool = require('../config/db');
 
-// Adjuntos: PDF o imagen, máx 5MB, guardados en backend/uploads (servidos en /uploads)
+// Adjuntos: PDF o imagen, máx 5MB, servidos en /uploads. En serverless
+// (Vercel) el FS es read-only salvo /tmp: definir UPLOADS_DIR=/tmp/uploads
+// (ahí los adjuntos son efímeros — para persistencia real usar S3/Blob).
+const fs = require('fs');
+const UPLOADS_DIR = process.env.UPLOADS_DIR || path.join(__dirname, '../../uploads');
+fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+
 const storage = multer.diskStorage({
-  destination: path.join(__dirname, '../../uploads'),
+  destination: UPLOADS_DIR,
   filename: (req, file, cb) => {
     cb(null, `${crypto.randomBytes(12).toString('hex')}${path.extname(file.originalname).toLowerCase()}`);
   },
