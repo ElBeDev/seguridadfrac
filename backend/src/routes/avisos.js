@@ -25,16 +25,20 @@ const upload = multer({
 // OIDC + BLOB_STORE_ID (lo que inyecta la integración nueva de Vercel).
 const hayBlob = () => Boolean(process.env.BLOB_READ_WRITE_TOKEN || process.env.BLOB_STORE_ID);
 
+// El store es de acceso privado: el archivo vive en Blob como
+// avisos/<nombre> y se sirve a través de GET /api/uploads/<nombre>
+// (ver routes/adjuntos.js), así la URL guardada en la DB es la misma
+// forma en local y en producción.
 async function guardarAdjunto(file) {
   const nombre = `${crypto.randomBytes(12).toString('hex')}${path.extname(file.originalname).toLowerCase()}`;
   if (hayBlob()) {
     try {
       const { put } = require('@vercel/blob');
-      const blob = await put(`avisos/${nombre}`, file.buffer, {
-        access: 'public',
+      await put(`avisos/${nombre}`, file.buffer, {
+        access: 'private',
         contentType: file.mimetype,
       });
-      return blob.url;
+      return `/api/uploads/${nombre}`;
     } catch (err) {
       // En Vercel el disco es efímero: mejor fallar claro que degradar.
       // En local (env vars pulled sin OIDC válido) sí caemos a disco.
@@ -48,16 +52,19 @@ async function guardarAdjunto(file) {
 
 async function borrarAdjunto(adjunto) {
   if (!adjunto) return;
-  try {
-    if (adjunto.startsWith('https://') && hayBlob()) {
+  const nombre = path.basename(adjunto);
+  if (hayBlob()) {
+    try {
       const { del } = require('@vercel/blob');
-      await del(adjunto);
-    } else if (adjunto.startsWith('/api/uploads/')) {
-      fs.unlinkSync(path.join(UPLOADS_DIR, path.basename(adjunto)));
+      await del(`avisos/${nombre}`);
+    } catch (err) {
+      console.error('No se pudo borrar el blob:', err.message);
     }
-  } catch (err) {
-    // El aviso se borra aunque el archivo huérfano no se pueda limpiar
-    console.error('No se pudo borrar el adjunto:', err.message);
+  }
+  try {
+    fs.unlinkSync(path.join(UPLOADS_DIR, nombre));
+  } catch {
+    // no estaba en disco — normal cuando vivía en Blob
   }
 }
 
