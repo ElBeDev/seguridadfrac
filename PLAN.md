@@ -144,8 +144,14 @@ Comunicación y Seguridad; ver "Fase 4" para lo que quedó de Pagos/CFDI).
    nativo porque npm bloquea install scripts en el build). Admin de prod
    creado; schema y seed de amenidades aplicados a Neon. Detalles y
    limitaciones en DEPLOY.md.
-5. [ ] **Adjuntos persistentes en prod** — en Vercel van a /tmp
-   (efímero); migrar a Vercel Blob o S3 cuando el deploy quede.
+5. [x] **Adjuntos persistentes en prod** — migrados a **Vercel Blob**
+   (store privado `adjuntos`): `put(access: private)` al subir, servidos
+   por streaming vía `GET /api/uploads/<nombre>` (routes/adjuntos.js),
+   `del()` al eliminar el aviso. Auth del SDK por OIDC + `BLOB_STORE_ID`
+   (la integración nueva no inyecta `BLOB_READ_WRITE_TOKEN`). En dev
+   local sin store: disco como siempre, misma forma de URL. Verificado
+   en prod: subir→servir→borrar→404. Límite 4MB (cap real del body en
+   funciones de Vercel).
 
 ## Reglas del proyecto (no romper)
 

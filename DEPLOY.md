@@ -47,11 +47,18 @@ DATABASE_URL="postgres://...?sslmode=require" npm run create-admin -- admin@tucl
 - Entra con el admin que creaste en el paso 1; crea un propietario de
   prueba desde Admin y verifícalo.
 
-## Limitaciones conocidas en serverless
+## Adjuntos: Vercel Blob
 
-- **Adjuntos de avisos**: van a `/tmp` (efímero) — sobreviven un rato y
-  desaparecen con el reciclado de la función. Para adjuntos de verdad en
-  producción: Vercel Blob o S3 (pendiente en PLAN.md fase 5).
+Los adjuntos de avisos viven en un **Blob store privado** (creado desde
+Storage → Blob y conectado al proyecto — eso inyecta `BLOB_STORE_ID` y
+el SDK autentica por OIDC; la integración nueva ya no da
+`BLOB_READ_WRITE_TOKEN`). El backend hace `put(access: 'private')` al
+publicar, los sirve por streaming en `GET /api/uploads/<nombre>` y hace
+`del()` al eliminar el aviso. Sin store (dev local) todo cae a disco en
+`backend/uploads/` con la misma forma de URL. Límite: 4MB por archivo
+(las funciones de Vercel capan el body a ~4.5MB).
+
+## Limitaciones conocidas en serverless
 - **Rate limiting**: `express-rate-limit` en memoria es por instancia;
   con varias instancias el límite efectivo es más laxo. Para endurecerlo:
   store en Redis/Upstash.
