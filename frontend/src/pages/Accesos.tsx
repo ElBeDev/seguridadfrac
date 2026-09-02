@@ -40,8 +40,9 @@ function Accesos() {
   const [validada, setValidada] = useState<Visita | null>(null);
   const [errorValidar, setErrorValidar] = useState('');
 
-  let esAdmin = false;
-  try { esAdmin = JSON.parse(localStorage.getItem('user') || '{}').rol === 'admin'; } catch { /* propietario */ }
+  let rol = 'propietario';
+  try { rol = JSON.parse(localStorage.getItem('user') || '{}').rol || 'propietario'; } catch { /* propietario */ }
+  const esCaseta = rol === 'admin' || rol === 'vigilancia';
 
   const authHeaders = () => ({
     'Content-Type': 'application/json',
@@ -61,12 +62,12 @@ function Accesos() {
 
   // El registro de paquetes necesita la lista de propietarios (solo admin)
   useEffect(() => {
-    if (!esAdmin) return;
-    fetch('/api/usuarios', { headers: authHeaders() })
+    if (!esCaseta) return;
+    fetch('/api/usuarios/propietarios', { headers: authHeaders() })
       .then(r => (r.ok ? r.json() : []))
-      .then((users: UsuarioMin[]) => setPropietarios(users.filter(u => u.rol === 'propietario' && u.estado === 'verified')))
+      .then(setPropietarios)
       .catch(console.error);
-  }, [esAdmin]);
+  }, [esCaseta]);
 
   const avisar = (texto: string) => {
     setToast(texto);
@@ -159,7 +160,7 @@ function Accesos() {
   };
 
   const tabs: { key: TabKey; icon: React.ReactNode; label: string; soloAdmin?: boolean }[] = [
-    { key: 'visitas', icon: <FaIdBadge />, label: esAdmin ? 'Visitas' : 'Mis Visitas' },
+    { key: 'visitas', icon: <FaIdBadge />, label: esCaseta ? 'Visitas' : 'Mis Visitas' },
     { key: 'paqueteria', icon: <FaBoxOpen />, label: 'Paquetería' },
     { key: 'validar', icon: <FaQrcode />, label: 'Validar Código', soloAdmin: true },
   ];
@@ -173,19 +174,19 @@ function Accesos() {
 
       <div className="unified-card">
         <div className="button-tabs-row">
-          {activeTab === 'visitas' && !esAdmin && (
+          {activeTab === 'visitas' && !esCaseta && (
             <button className="btn-nuevo" onClick={() => { setModal('visita'); setErrorModal(''); }}>
               <FaPlus /> Nuevo Pase
             </button>
           )}
-          {activeTab === 'paqueteria' && esAdmin && (
+          {activeTab === 'paqueteria' && esCaseta && (
             <button className="btn-nuevo" onClick={() => { setModal('paquete'); setErrorModal(''); }}>
               <FaPlus /> Registrar Paquete
             </button>
           )}
-          {((activeTab === 'visitas' && esAdmin) || (activeTab === 'paqueteria' && !esAdmin) || activeTab === 'validar') && <span />}
+          {((activeTab === 'visitas' && esCaseta) || (activeTab === 'paqueteria' && !esCaseta) || activeTab === 'validar') && <span />}
           <div className="tabs">
-            {tabs.filter(t => !t.soloAdmin || esAdmin).map(tab => (
+            {tabs.filter(t => !t.soloAdmin || esCaseta).map(tab => (
               <button key={tab.key} className={`tab ${activeTab === tab.key ? 'active' : ''}`} onClick={() => setActiveTab(tab.key)}>
                 {tab.icon} {tab.label}
               </button>
@@ -199,7 +200,7 @@ function Accesos() {
       {/* ---- VISITAS ---- */}
       {activeTab === 'visitas' && (
         <div className="table-card">
-          <h2>{esAdmin ? 'Registro de visitas' : 'Mis pases de visita'}</h2>
+          <h2>{esCaseta ? 'Registro de visitas' : 'Mis pases de visita'}</h2>
           {visitas.length === 0 ? (
             <p className="modulo-empty">No hay visitas registradas.</p>
           ) : (
@@ -209,7 +210,7 @@ function Accesos() {
                   <th>Visitante</th>
                   <th>Código</th>
                   <th>Tipo</th>
-                  {esAdmin && <th>Residente</th>}
+                  {esCaseta && <th>Residente</th>}
                   <th>Fecha</th>
                   <th>Estado</th>
                   <th>Acciones</th>
@@ -221,7 +222,7 @@ function Accesos() {
                     <td>{visita.nombre_visitante}</td>
                     <td><code className="codigo-pill">{visita.codigo}</code></td>
                     <td style={{ textTransform: 'capitalize' }}>{visita.tipo}</td>
-                    {esAdmin && <td>{visita.propietario_nombre}</td>}
+                    {esCaseta && <td>{visita.propietario_nombre}</td>}
                     <td>{new Date(visita.fecha_esperada).toLocaleDateString('es-MX', { day: 'numeric', month: 'short' })}</td>
                     <td>
                       <span className={`visita-badge ${visita.estado}`}>{ESTADO_VISITA[visita.estado] || visita.estado}</span>
@@ -230,12 +231,12 @@ function Accesos() {
                       {visita.estado === 'esperada' && (
                         <>
                           <button className="btn-action" onClick={() => mostrarPase(visita)}>QR</button>
-                          {esAdmin
+                          {esCaseta
                             ? <button className="btn-action" onClick={() => accionVisita(visita, 'entrada')}>Entrada</button>
                             : <button className="btn-action btn-action-danger" onClick={() => accionVisita(visita, 'cancelar')}>Cancelar</button>}
                         </>
                       )}
-                      {visita.estado === 'ingresada' && esAdmin && (
+                      {visita.estado === 'ingresada' && esCaseta && (
                         <button className="btn-action" onClick={() => accionVisita(visita, 'salida')}>Salida</button>
                       )}
                     </td>
@@ -250,7 +251,7 @@ function Accesos() {
       {/* ---- PAQUETERÍA ---- */}
       {activeTab === 'paqueteria' && (
         <div className="table-card">
-          <h2>{esAdmin ? 'Paquetes en caseta' : 'Mis paquetes'}</h2>
+          <h2>{esCaseta ? 'Paquetes en caseta' : 'Mis paquetes'}</h2>
           {paquetes.length === 0 ? (
             <p className="modulo-empty">No hay paquetes registrados.</p>
           ) : (
@@ -259,10 +260,10 @@ function Accesos() {
                 <tr>
                   <th>Descripción</th>
                   <th>Paquetería</th>
-                  {esAdmin && <th>Residente</th>}
+                  {esCaseta && <th>Residente</th>}
                   <th>Recibido</th>
                   <th>Estado</th>
-                  {esAdmin && <th>Acciones</th>}
+                  {esCaseta && <th>Acciones</th>}
                 </tr>
               </thead>
               <tbody>
@@ -270,14 +271,14 @@ function Accesos() {
                   <tr key={paquete.id}>
                     <td>{paquete.descripcion}</td>
                     <td>{paquete.paqueteria || '—'}</td>
-                    {esAdmin && <td>{paquete.propietario_nombre}</td>}
+                    {esCaseta && <td>{paquete.propietario_nombre}</td>}
                     <td>{new Date(paquete.created_at).toLocaleDateString('es-MX', { day: 'numeric', month: 'short' })}</td>
                     <td>
                       <span className={`visita-badge ${paquete.estado === 'en_caseta' ? 'esperada' : 'salida'}`}>
                         {paquete.estado === 'en_caseta' ? 'En caseta' : 'Entregado'}
                       </span>
                     </td>
-                    {esAdmin && (
+                    {esCaseta && (
                       <td>
                         {paquete.estado === 'en_caseta' && (
                           <button className="btn-action" onClick={() => entregarPaquete(paquete)}>Entregar</button>
@@ -293,7 +294,7 @@ function Accesos() {
       )}
 
       {/* ---- VALIDAR (caseta) ---- */}
-      {activeTab === 'validar' && esAdmin && (
+      {activeTab === 'validar' && esCaseta && (
         <div className="table-card validar-card">
           <h2>Validar código de acceso</h2>
           <p className="aviso-meta" style={{ marginBottom: 16 }}>

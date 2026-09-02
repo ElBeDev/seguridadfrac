@@ -12,7 +12,7 @@ function Sidebar() {
   } catch { /* localStorage corrupto — mostramos fallback */ }
 
   const nombre = user.nombre_completo || 'Usuario';
-  const rol = user.rol === 'admin' ? 'Administrador' : 'Propietario';
+  const rol = user.rol === 'admin' ? 'Administrador' : user.rol === 'vigilancia' ? 'Vigilancia' : 'Propietario';
   const iniciales = nombre
     .split(' ')
     .filter(Boolean)
@@ -21,8 +21,19 @@ function Sidebar() {
     .join('');
 
   const esAdmin = user.rol === 'admin';
+  const esVigilancia = user.rol === 'vigilancia';
 
-  const secciones: { titulo: string; items: { path: string; icon: React.ComponentType; label: string }[] }[] = [
+  // Vigilancia solo opera la caseta: únicamente el módulo de Accesos
+  const seccionesVigilancia: { titulo: string; items: { path: string; icon: React.ComponentType; label: string }[] }[] = [
+    {
+      titulo: 'Caseta',
+      items: [
+        { path: '/accesos', icon: FaIdBadge, label: 'Accesos' },
+      ],
+    },
+  ];
+
+  const seccionesCompletas: { titulo: string; items: { path: string; icon: React.ComponentType; label: string }[] }[] = [
     {
       titulo: 'Principal',
       items: [
@@ -47,6 +58,8 @@ function Sidebar() {
       ],
     },
   ];
+
+  const secciones = esVigilancia ? seccionesVigilancia : seccionesCompletas;
 
   const handleLogout = () => {
     localStorage.removeItem('token');

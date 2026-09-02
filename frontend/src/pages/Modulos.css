@@ -96,6 +96,90 @@
   padding: 6px 9px;
 }
 
+.aviso-adjunto {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--color-primary-strong);
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  border-radius: var(--radius-pill);
+  padding: 6px 14px;
+  margin-bottom: 8px;
+}
+
+.aviso-adjunto:hover {
+  background: rgba(16, 185, 129, 0.14);
+}
+
+.adjunto-input {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  border: 1.5px dashed var(--color-border);
+  border-radius: 12px;
+  font-size: 0.88rem;
+  color: var(--color-text-light);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.adjunto-input:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary-strong);
+}
+
+/* ---- Reservas ---- */
+.amenidades-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.amenidad-chip {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 14px 18px;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.amenidad-chip strong {
+  color: var(--color-ink);
+  font-size: 0.95rem;
+}
+
+.amenidad-chip span {
+  color: var(--color-text-light);
+  font-size: 0.8rem;
+}
+
+.hora-row {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.hora-row label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: var(--color-text);
+  flex: 1;
+}
+
+.hora-row input {
+  flex: 1;
+}
+
 .btn-mini-text {
   display: inline-flex;
   align-items: center;

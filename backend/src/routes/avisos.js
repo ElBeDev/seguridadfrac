@@ -1,7 +1,26 @@
 const express = require('express');
 const router = express.Router();
+const path = require('path');
+const crypto = require('crypto');
+const multer = require('multer');
 const { verifyAdmin, verifyPropietario } = require('../middlewares/auth');
 const pool = require('../config/db');
+
+// Adjuntos: PDF o imagen, máx 5MB, guardados en backend/uploads (servidos en /uploads)
+const storage = multer.diskStorage({
+  destination: path.join(__dirname, '../../uploads'),
+  filename: (req, file, cb) => {
+    cb(null, `${crypto.randomBytes(12).toString('hex')}${path.extname(file.originalname).toLowerCase()}`);
+  },
+});
+const upload = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    const ok = ['application/pdf', 'image/png', 'image/jpeg', 'image/webp'].includes(file.mimetype);
+    cb(ok ? null : new Error('Solo se aceptan PDF o imágenes (png/jpg/webp)'), ok);
+  },
+});
 
 // Feed de comunicados (cualquier usuario autenticado)
 router.get('/', verifyPropietario, async (req, res) => {
@@ -18,19 +37,27 @@ router.get('/', verifyPropietario, async (req, res) => {
   }
 });
 
-// Publicar aviso (solo admin)
-router.post('/', verifyAdmin, async (req, res) => {
-  try {
-    const { titulo, cuerpo, prioridad } = req.body;
-    if (!titulo || !cuerpo) return res.status(400).json({ message: 'Título y cuerpo son requeridos' });
-    const { rows } = await pool.query(
-      'INSERT INTO avisos (titulo, cuerpo, prioridad, creado_por) VALUES ($1,$2,$3,$4) RETURNING *',
-      [titulo, cuerpo, prioridad || 'normal', req.user.id]
-    );
-    res.status(201).json(rows[0]);
-  } catch (error) {
-    res.status(400).json({ message: 'Error al crear aviso', error: error.message });
-  }
+// Publicar aviso (solo admin) — multipart opcional con campo "adjunto"
+router.post('/', verifyAdmin, (req, res) => {
+  upload.single('adjunto')(req, res, async (err) => {
+    if (err) return res.status(400).json({ message: err.message });
+    try {
+      const { titulo, cuerpo, prioridad } = req.body;
+      if (!titulo || !cuerpo) return res.status(400).json({ message: 'Título y cuerpo son requeridos' });
+      const { rows } = await pool.query(
+        'INSERT INTO avisos (titulo, cuerpo, prioridad, adjunto, adjunto_nombre, creado_por) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *',
+        [
+          titulo, cuerpo, prioridad || 'normal',
+          req.file ? `/uploads/${req.file.filename}` : null,
+          req.file ? req.file.originalname : null,
+          req.user.id,
+        ]
+      );
+      res.status(201).json(rows[0]);
+    } catch (error) {
+      res.status(400).json({ message: 'Error al crear aviso', error: error.message });
+    }
+  });
 });
 
 // Eliminar aviso (solo admin)

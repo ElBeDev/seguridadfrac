@@ -34,3 +34,44 @@ exports.verifyPropietario = async (req, res, next) => {
     res.status(401).json({ error: 'Token inválido' });
   }
 };
+
+// Caseta: admin o vigilancia (validar códigos, entradas/salidas, paquetería)
+exports.verifyCaseta = async (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) return res.status(401).json({ error: 'No autorizado' });
+  const token = authHeader.split(' ')[1];
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const { rows } = await pool.query('SELECT * FROM users WHERE id = $1', [decoded.id]);
+    const user = rows[0];
+    if (!user || (user.rol !== 'admin' && user.rol !== 'vigilancia')) {
+      return res.status(403).json({ error: 'Solo administración o vigilancia pueden realizar esta acción' });
+    }
+    req.user = user;
+    next();
+  } catch (err) {
+    res.status(401).json({ error: 'Token inválido' });
+  }
+};
+
+// Lectura del módulo de accesos: admin, vigilancia, o propietario verificado
+exports.verifyAcceso = async (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) return res.status(401).json({ error: 'No autorizado' });
+  const token = authHeader.split(' ')[1];
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const { rows } = await pool.query('SELECT * FROM users WHERE id = $1', [decoded.id]);
+    const user = rows[0];
+    const permitido = user && (
+      user.rol === 'admin' ||
+      user.rol === 'vigilancia' ||
+      (user.rol === 'propietario' && user.estado === 'verified')
+    );
+    if (!permitido) return res.status(403).json({ error: 'No autorizado para este módulo' });
+    req.user = user;
+    next();
+  } catch (err) {
+    res.status(401).json({ error: 'Token inválido' });
+  }
+};

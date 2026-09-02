@@ -23,6 +23,7 @@
     "joi": "^17.12.0",
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
+    "multer": "^2.3.0",
     "pg": "^8.22.0"
   },
   "devDependencies": {

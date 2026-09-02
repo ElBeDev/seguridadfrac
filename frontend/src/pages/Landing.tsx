@@ -44,7 +44,7 @@ function Landing() {
       if (response.ok) {
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
-        navigate('/inicio');
+        navigate(data.user.rol === 'vigilancia' ? '/accesos' : '/inicio');
       } else {
         setError(data.error || 'Credenciales inválidas');
       }

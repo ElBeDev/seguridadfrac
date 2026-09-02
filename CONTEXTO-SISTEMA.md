@@ -21,16 +21,26 @@ sobre el personal que entra a las casas de la comunidad.
 ## Roles
 
 - **admin** — gestiona usuarios (verifica/suspende propietarios), modera
-  reportes, puede editar cualquier empleado.
+  reportes, puede editar cualquier empleado, y opera todos los módulos.
 - **propietario** — solo puede operar (registrar empleados, reportar,
   ver historial) una vez que su cuenta está en estado `verified` (un admin
   lo aprueba manualmente después del alta). Mientras está `pending` puede
   loguearse pero no realizar acciones que requieren `verifyPropietario`.
+- **vigilancia** — la caseta. Solo el módulo de Accesos: validar códigos,
+  registrar entradas/salidas y paquetería, y la lista mínima de
+  propietarios (`GET /api/usuarios/propietarios`, sin datos de contacto).
+  Nace `verified` (no pasa por verificación de vecino), su login redirige
+  a `/accesos` y el sidebar le muestra solo ese módulo. Middlewares:
+  `verifyCaseta` (admin|vigilancia) y `verifyAcceso` (caseta o
+  propietario verificado) en `src/middlewares/auth.js`.
 
-No existe registro público de propietarios: los crea un admin vía
-`POST /api/auth/create-propietario` (protegido, requiere ser admin). Esto
-es intencional: solo alguien de la administración de la comunidad da de
-alta a los vecinos con acceso al sistema.
+No existe registro público: los crea un admin vía
+`POST /api/auth/create-propietario` (protegido, requiere ser admin;
+acepta `rol: propietario|vigilancia`). Esto es intencional: solo la
+administración de la comunidad da de alta cuentas.
+
+Además, si `system_settings.maintenance_mode = 'true'`, el login devuelve
+503 para todo rol excepto admin.
 
 ## Modelo de datos (PostgreSQL)
 
@@ -112,11 +122,16 @@ con `verifyAdmin`:
 | `/api/solicitudes-admin` | Tickets a administración | GET · POST (propietario) · PATCH /:id (admin: estado+respuesta) |
 | `/api/finanzas` | Cuotas/egresos | GET/POST /cuotas (POST admin; sin `propietario_id` = cargo masivo) · PATCH /cuotas/:id/pagar (admin) · GET/POST /egresos (admin) · GET /resumen (admin) |
 | `/api/visitas` | Control de acceso | GET (`?hoy=1`) · POST (propietario, genera código `V-XXXXXX`) · GET /validar/:codigo (admin) · PATCH /:id/entrada·salida (admin) · PATCH /:id/cancelar |
-| `/api/paquetes` | Paquetería | GET · POST (admin) · PATCH /:id/entregar (admin) |
+| `/api/paquetes` | Paquetería | GET (caseta ve todos) · POST (caseta) · PATCH /:id/entregar (caseta) |
+| `/api/reservas` | Amenidades | GET /amenidades · GET (confirmadas próximas) · POST (con chequeo de traslape, 409 si choca) · PATCH /:id/cancelar (dueño o admin) |
+
+Los avisos aceptan un adjunto multipart opcional (campo `adjunto`, PDF o
+imagen máx 5MB) que se guarda en `backend/uploads/` y se sirve en
+`/uploads` (proxy de Vite configurado en dev).
 
 Tablas correspondientes en `schema.sql`: `avisos`, `eventos`, `encuestas`,
 `encuesta_opciones`, `encuesta_votos`, `solicitudes_admin`, `cuotas`,
-`egresos`, `visitas`, `paquetes`.
+`egresos`, `visitas`, `paquetes`, `amenidades` (con seed de 3), `reservas`.
 
 Páginas frontend: **Comunidad** (`/comunidad`), **Accesos** (`/accesos`,
 con QR vía lib `qrcode` y validador de caseta para admin) y **Finanzas**

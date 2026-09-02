@@ -97,6 +97,10 @@ app.use('/api/solicitudes-admin', require('./routes/solicitudesAdmin'));
 app.use('/api/finanzas', require('./routes/finanzas'));
 app.use('/api/visitas', require('./routes/visitas'));
 app.use('/api/paquetes', require('./routes/paquetes'));
+app.use('/api/reservas', require('./routes/reservas'));
+
+// Adjuntos de avisos
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 // Rutas de catálogo de servicios
 const servicesRoutes = require('./routes/services');
 app.use('/api/services', servicesRoutes);

@@ -1,27 +1,27 @@
 const express = require('express');
 const router = express.Router();
-const { verifyAdmin, verifyPropietario } = require('../middlewares/auth');
+const { verifyCaseta, verifyAcceso } = require('../middlewares/auth');
 const pool = require('../config/db');
 
-// Listar: admin ve todos, propietario los suyos
-router.get('/', verifyPropietario, async (req, res) => {
+// Listar: admin/vigilancia ven todos, propietario los suyos
+router.get('/', verifyAcceso, async (req, res) => {
   try {
-    const esAdmin = req.user.rol === 'admin';
+    const esCaseta = req.user.rol === 'admin' || req.user.rol === 'vigilancia';
     const { rows } = await pool.query(`
       SELECT p.*, u.nombre_completo AS propietario_nombre, u.direccion
       FROM paquetes p LEFT JOIN users u ON u.id = p.propietario_id
-      ${esAdmin ? '' : 'WHERE p.propietario_id = $1'}
+      ${esCaseta ? '' : 'WHERE p.propietario_id = $1'}
       ORDER BY p.created_at DESC
       LIMIT 100
-    `, esAdmin ? [] : [req.user.id]);
+    `, esCaseta ? [] : [req.user.id]);
     res.json(rows);
   } catch (error) {
     res.status(500).json({ message: 'Error al listar paquetes', error: error.message });
   }
 });
 
-// Registrar paquete recibido en caseta (admin)
-router.post('/', verifyAdmin, async (req, res) => {
+// Registrar paquete recibido en caseta (admin/vigilancia)
+router.post('/', verifyCaseta, async (req, res) => {
   try {
     const { propietario_id, descripcion, paqueteria } = req.body;
     if (!propietario_id || !descripcion) {
@@ -37,8 +37,8 @@ router.post('/', verifyAdmin, async (req, res) => {
   }
 });
 
-// Marcar entregado (admin)
-router.patch('/:id/entregar', verifyAdmin, async (req, res) => {
+// Marcar entregado (admin/vigilancia)
+router.patch('/:id/entregar', verifyCaseta, async (req, res) => {
   try {
     const { rows } = await pool.query(
       "UPDATE paquetes SET estado='entregado', entregado_at=NOW() WHERE id=$1 AND estado='en_caseta' RETURNING *",

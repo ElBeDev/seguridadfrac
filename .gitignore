@@ -3,3 +3,4 @@ node_modules/
 backend/public/
 dist/
 .DS_Store
+backend/uploads/

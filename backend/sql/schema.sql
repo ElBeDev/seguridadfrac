@@ -79,6 +79,8 @@ CREATE TABLE IF NOT EXISTS avisos (
   titulo VARCHAR(255) NOT NULL,
   cuerpo TEXT NOT NULL,
   prioridad VARCHAR(20) NOT NULL DEFAULT 'normal', -- normal | importante | urgente
+  adjunto VARCHAR(500), -- ruta servida en /uploads
+  adjunto_nombre VARCHAR(255), -- nombre original del archivo
   creado_por INTEGER REFERENCES users(id),
   created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
@@ -165,6 +167,33 @@ CREATE TABLE IF NOT EXISTS visitas (
   estado VARCHAR(20) NOT NULL DEFAULT 'esperada', -- esperada | ingresada | salida | cancelada
   entrada_at TIMESTAMP,
   salida_at TIMESTAMP,
+  notas TEXT DEFAULT '',
+  created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS amenidades (
+  id SERIAL PRIMARY KEY,
+  nombre VARCHAR(255) UNIQUE NOT NULL,
+  descripcion TEXT DEFAULT '',
+  capacidad INTEGER,
+  activa BOOLEAN NOT NULL DEFAULT true
+);
+
+-- Amenidades de arranque (editar por cliente)
+INSERT INTO amenidades (nombre, descripcion, capacidad) VALUES
+  ('Casa club', 'Salón principal con cocina y terraza', 60),
+  ('Área de asadores', 'Asadores y mesas al aire libre', 30),
+  ('Cancha de usos múltiples', 'Fútbol rápido y básquetbol', 20)
+ON CONFLICT (nombre) DO NOTHING;
+
+CREATE TABLE IF NOT EXISTS reservas (
+  id SERIAL PRIMARY KEY,
+  amenidad_id INTEGER NOT NULL REFERENCES amenidades(id),
+  propietario_id INTEGER NOT NULL REFERENCES users(id),
+  fecha DATE NOT NULL,
+  hora_inicio TIME NOT NULL,
+  hora_fin TIME NOT NULL,
+  estado VARCHAR(20) NOT NULL DEFAULT 'confirmada', -- confirmada | cancelada
   notas TEXT DEFAULT '',
   created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );

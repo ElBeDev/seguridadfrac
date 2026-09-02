@@ -51,7 +51,7 @@ function Admin() {
   const [mensaje, setMensaje] = useState('');
 
   const [showNuevo, setShowNuevo] = useState(false);
-  const [nuevoForm, setNuevoForm] = useState({ nombre_completo: '', email: '', telefono: '', direccion: '', password: '' });
+  const [nuevoForm, setNuevoForm] = useState({ nombre_completo: '', email: '', telefono: '', direccion: '', password: '', rol: 'propietario' });
   const [guardandoNuevo, setGuardandoNuevo] = useState(false);
   const [errorNuevo, setErrorNuevo] = useState('');
 
@@ -217,8 +217,9 @@ function Admin() {
       });
       if (response.ok) {
         setShowNuevo(false);
-        setNuevoForm({ nombre_completo: '', email: '', telefono: '', direccion: '', password: '' });
-        mostrarMensaje('✓ Propietario creado, queda pendiente de verificación');
+        const eraVigilancia = nuevoForm.rol === 'vigilancia';
+        setNuevoForm({ nombre_completo: '', email: '', telefono: '', direccion: '', password: '', rol: 'propietario' });
+        mostrarMensaje(eraVigilancia ? '✓ Usuario de vigilancia creado y activo' : '✓ Propietario creado, queda pendiente de verificación');
         fetchUsuarios();
       } else {
         const error = await response.json();
@@ -429,8 +430,16 @@ function Admin() {
       {showNuevo && (
         <div className="modal-overlay" onClick={() => setShowNuevo(false)}>
           <div className="modal-card" onClick={(e) => e.stopPropagation()}>
-            <h2>Nuevo Propietario</h2>
+            <h2>Nuevo Usuario</h2>
             <form onSubmit={handleCrearUsuario}>
+              <select
+                className="modal-select"
+                value={nuevoForm.rol}
+                onChange={(e) => setNuevoForm({ ...nuevoForm, rol: e.target.value })}
+              >
+                <option value="propietario">Propietario (requiere verificación)</option>
+                <option value="vigilancia">Vigilancia / caseta (activo de inmediato)</option>
+              </select>
               <input
                 placeholder="Nombre completo"
                 value={nuevoForm.nombre_completo}

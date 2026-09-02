@@ -101,34 +101,45 @@ Comunicación y Seguridad; ver "Fase 4" para lo que quedó de Pagos/CFDI).
       entrada, resumen financiero con 4 KPIs y 2 charts
 - [x] `tsc -b` limpio, build de producción OK, 0 errores de consola
 
-## Fase 4 — Pendientes (en orden sugerido)
+### ✅ Fase 4 — Roles, settings reales, reservas y adjuntos (2026-08-28)
 
-1. [ ] **Git init + commit inicial** — todo el proyecto sigue sin control
-   de versiones. Primer paso antes de cualquier otra cosa.
-2. [ ] **Rol `vigilancia`** — hoy la caseta usa la cuenta admin. Agregar
-   tercer rol con acceso SOLO a Accesos (validar códigos, registrar
-   paquetes/entradas/salidas). Toca: `users.rol`, middleware nuevo
-   `verifyVigilancia` o permisos por rol, sidebar condicional, y el
-   script create-admin generalizado.
-3. [ ] **Consumir `system_settings`** — que `maintenance_mode` bloquee
-   login de propietarios (admin pasa), y que `email_notifications`
-   controle algo real cuando haya correo.
-4. [ ] **Pasarela de pagos en línea** (Vivook: "Pagos en Línea") — Stripe
+1. [x] **Git init + commit inicial** — repo creado, `.env` y
+   `backend/uploads/` ignorados, baseline de 74 archivos.
+2. [x] **Rol `vigilancia`** — middlewares `verifyCaseta` (admin|vigilancia)
+   y `verifyAcceso` (caseta o propietario verificado); la caseta valida
+   códigos, registra entradas/salidas y paquetes, ve la lista mínima de
+   propietarios (`GET /api/usuarios/propietarios`, sin emails/teléfonos),
+   y recibe **403 en todo lo demás** (verificado). Alta desde el modal
+   "Nuevo Usuario" del Admin (select de rol; vigilancia nace `verified`).
+   Login redirige a `/accesos` y el sidebar muestra SOLO Accesos.
+   Usuario demo: `caseta@example.com` / `caseta123`.
+3. [x] **`system_settings` consumido** — `maintenance_mode=true` bloquea
+   el login de todo rol excepto admin con 503 y mensaje claro (probado
+   desde la UI: toggle en Admin → propietario bloqueado → restaurado).
+   `email_notifications` queda para cuando exista mailer.
+4. [x] **Reservas de amenidades** — tablas `amenidades` (seed: Casa club,
+   Asadores, Cancha) y `reservas`; `POST /api/reservas` con **chequeo de
+   traslape** (409 si el horario choca); tab "Reservas" en Comunidad con
+   catálogo, tabla de próximas y cancelación (dueño o admin).
+5. [x] **Adjuntos en avisos** — multer (PDF/imagen, 5MB) a
+   `backend/uploads` servido en `/uploads` (proxy de Vite incluido);
+   file input en el modal de aviso y chip de descarga en la card.
+
+### Fase 5 — Pendientes (bloqueados por terceros o infra)
+
+1. [ ] **Pasarela de pagos en línea** (Vivook: "Pagos en Línea") — Stripe
    o Conekta (México: OXXO/SPEI). El modelo de `cuotas` ya soporta:
-   agregar `checkout` que marque la cuota pagada vía webhook. Requiere
-   cuenta del cliente y llaves por despliegue (variables de entorno).
-5. [ ] **Facturación CFDI** (Vivook: "Facturación CFDI") — requiere
-   contratar un PAC (Facturama/SW Sapien). Diseñar tabla `facturas`
-   ligada a cuotas pagadas. No intentar sin PAC de por medio.
-6. [ ] **Adjuntos/archivos** — compartir documentos (reglamento, actas)
-   en avisos; multer + carpeta uploads o S3 según despliegue.
-7. [ ] **Tiempo real** — notificaciones push/WebSocket (hoy se calculan
-   al cargar). Candidato: SSE simple desde Express.
-8. [ ] **Reservas de amenidades** — casa club, asadores, canchas
-   (calendario con choques). Vivook no lo destaca pero todo
-   fraccionamiento lo pide.
-9. [ ] **Deploy del primer cliente** — VPS + dominio + SSL + Postgres
-   gestionado; revisar CSP/HSTS en `app.js` y rate limits.
+   agregar `checkout` que marque la cuota pagada vía webhook. **Bloqueado
+   por**: cuenta y llaves del cliente (variables de entorno por deploy).
+2. [ ] **Facturación CFDI** (Vivook: "Facturación CFDI") — **bloqueado
+   por**: contratar un PAC (Facturama/SW Sapien). Diseñar tabla
+   `facturas` ligada a cuotas pagadas. No intentar sin PAC de por medio.
+3. [ ] **Tiempo real** — notificaciones push/WebSocket (hoy se calculan
+   al cargar). Candidato: SSE simple desde Express. Sin bloqueo externo,
+   solo priorización.
+4. [ ] **Deploy del primer cliente** — VPS + dominio + SSL + Postgres
+   gestionado; revisar CSP/HSTS en `app.js` y rate limits. **Bloqueado
+   por**: contratar la infra.
 
 ## Reglas del proyecto (no romper)
 

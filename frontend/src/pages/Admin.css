@@ -152,6 +152,11 @@
   color: #1E40AF;
 }
 
+.role-badge.vigilancia {
+  background: #FEF3C7;
+  color: #92400E;
+}
+
 .btn-icon {
   padding: 8px 11px;
   margin-right: 6px;

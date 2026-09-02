@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { verifyAdmin, verifyPropietario } = require('../middlewares/auth');
+const { verifyPropietario, verifyCaseta, verifyAcceso } = require('../middlewares/auth');
 const pool = require('../config/db');
 
 // Alfabeto sin caracteres ambiguos (0/O, 1/I/L)
@@ -11,13 +11,13 @@ function generarCodigo() {
   return `V-${s}`;
 }
 
-// Listar: admin ve todas, propietario las suyas. ?hoy=1 filtra a la fecha actual.
-router.get('/', verifyPropietario, async (req, res) => {
+// Listar: admin/vigilancia ven todas, propietario las suyas. ?hoy=1 filtra a la fecha actual.
+router.get('/', verifyAcceso, async (req, res) => {
   try {
-    const esAdmin = req.user.rol === 'admin';
+    const esCaseta = req.user.rol === 'admin' || req.user.rol === 'vigilancia';
     const condiciones = [];
     const params = [];
-    if (!esAdmin) {
+    if (!esCaseta) {
       params.push(req.user.id);
       condiciones.push(`v.propietario_id = $${params.length}`);
     }
@@ -60,8 +60,8 @@ router.post('/', verifyPropietario, async (req, res) => {
   }
 });
 
-// Validar un código en caseta (admin) — devuelve la visita sin modificarla
-router.get('/validar/:codigo', verifyAdmin, async (req, res) => {
+// Validar un código en caseta (admin/vigilancia) — devuelve la visita sin modificarla
+router.get('/validar/:codigo', verifyCaseta, async (req, res) => {
   try {
     const { rows } = await pool.query(`
       SELECT v.*, u.nombre_completo AS propietario_nombre, u.direccion
@@ -75,8 +75,8 @@ router.get('/validar/:codigo', verifyAdmin, async (req, res) => {
   }
 });
 
-// Registrar entrada (admin/caseta)
-router.patch('/:id/entrada', verifyAdmin, async (req, res) => {
+// Registrar entrada (admin/vigilancia)
+router.patch('/:id/entrada', verifyCaseta, async (req, res) => {
   try {
     const { rows } = await pool.query(
       "UPDATE visitas SET estado='ingresada', entrada_at=NOW() WHERE id=$1 AND estado='esperada' RETURNING *",
@@ -89,8 +89,8 @@ router.patch('/:id/entrada', verifyAdmin, async (req, res) => {
   }
 });
 
-// Registrar salida (admin/caseta)
-router.patch('/:id/salida', verifyAdmin, async (req, res) => {
+// Registrar salida (admin/vigilancia)
+router.patch('/:id/salida', verifyCaseta, async (req, res) => {
   try {
     const { rows } = await pool.query(
       "UPDATE visitas SET estado='salida', salida_at=NOW() WHERE id=$1 AND estado='ingresada' RETURNING *",
