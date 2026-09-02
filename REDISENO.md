@@ -144,3 +144,19 @@ Security Management). Su verde vivo mapea directo a nuestro esmeralda.
   de botones reducido a 2-4px en todo el panel (la landing conserva su
   drama porque es marketing).
 - Vigilancia: un solo tile grande de Accesos, sin secciones.
+
+## Inicio como Overview real (2026-09-02)
+
+La página de Inicio era el mayor "AI tell" restante: 4 tarjetas idénticas
+centradas como launcher. Rediseñada como dashboard de overview siguiendo
+los patrones estándar (KPI strip arriba + grid de contexto + drill-down):
+
+- Saludo con fecha larga ("Hola, {nombre}") en lugar de página muda.
+- Grid de 3 tarjetas: **gauge semidonut** con la calificación global de
+  la comunidad (hue única #059669 validada), **Actividad reciente** (top
+  5 del feed real de /api/notificaciones con link a Ver todo) y **Tu
+  comunidad** (próximo evento + último aviso, link a Comunidad).
+- Los 4 flujos (Registrar/Buscar/Servicio/Reportar) pasaron de tarjetas
+  gigantes al patrón estándar de tabs del panel; los formularios quedan
+  intactos debajo.
+- CSS muerto de action-cards eliminado.

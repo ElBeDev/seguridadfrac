@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import {
   FaUserPlus,
   FaSearch,
@@ -24,7 +24,12 @@ import {
   FaTools,
   FaHardHat,
   FaUserNurse,
-  FaCheck
+  FaCheck,
+  FaExclamationTriangle,
+  FaBell,
+  FaCalendarAlt,
+  FaBullhorn,
+  FaChevronRight
 } from 'react-icons/fa';
 import { ZONAS } from '../config/branding';
 import './Inicio.css';
@@ -62,6 +67,38 @@ interface FormData {
     calidad: number;
   };
   descripcion: string;
+}
+
+
+/* Semidonut 0-5 para la calificación global (hue única #059669, validada) */
+function GaugeRating({ valor }: { valor: number | null }) {
+  const pct = valor !== null ? (valor / 5) * 100 : 0;
+  return (
+    <div className="gauge-wrap">
+      <svg viewBox="0 0 200 112" className="gauge-svg" role="img"
+        aria-label={valor !== null ? `Calificación promedio ${valor.toFixed(1)} de 5` : 'Sin calificaciones'}>
+        <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#E8EDF3" strokeWidth="15" strokeLinecap="round" />
+        {valor !== null && (
+          <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#059669" strokeWidth="15"
+            strokeLinecap="round" pathLength={100} strokeDasharray={`${pct} 100`} />
+        )}
+      </svg>
+      <div className="gauge-centro">
+        <span className="gauge-num">{valor !== null ? valor.toFixed(1) : 'N/D'}</span>
+        <span className="gauge-sub">de 5.0</span>
+      </div>
+    </div>
+  );
+}
+
+function formatRelativo(iso: string) {
+  const diff = Date.now() - new Date(iso).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return 'Ahora';
+  if (mins < 60) return `Hace ${mins} min`;
+  const horas = Math.floor(mins / 60);
+  if (horas < 24) return `Hace ${horas} h`;
+  return new Date(iso).toLocaleDateString('es-MX', { day: 'numeric', month: 'short' });
 }
 
 function Inicio() {
@@ -106,7 +143,10 @@ function Inicio() {
   });
 
   // Stats del strip superior (endpoint público)
-  const [stats, setStats] = useState<{ total: number; disponibles: number; calificados: number; servicios: number } | null>(null);
+  const [stats, setStats] = useState<{ total: number; disponibles: number; calificados: number; servicios: number; rating: number | null } | null>(null);
+  const [feed, setFeed] = useState<{ id: string; tipo: string; mensaje: string; fecha: string }[]>([]);
+  const [evento, setEvento] = useState<{ titulo: string; lugar: string; fecha_inicio: string } | null>(null);
+  const [aviso, setAviso] = useState<{ titulo: string; prioridad: string; created_at: string } | null>(null);
 
   useEffect(() => {
     fetch('/api/empleados')
@@ -116,45 +156,44 @@ function Inicio() {
         const conRating = data.filter(e =>
           [e.avg_puntualidad, e.avg_limpieza, e.avg_personalidad, e.avg_calidad_servicio].some((v) => Number(v) > 0)
         );
+        const proms = conRating.map(e => {
+          const vals = [e.avg_puntualidad, e.avg_limpieza, e.avg_personalidad, e.avg_calidad_servicio]
+            .map(Number).filter(v => !isNaN(v) && v > 0);
+          return vals.reduce((a, b) => a + b, 0) / vals.length;
+        });
         setStats({
           total: data.length,
           disponibles: data.filter(e => e.estado_actual === 'disponible').length,
           calificados: conRating.length,
           servicios: new Set(data.map(e => e.servicio).filter(Boolean)).size,
+          rating: proms.length ? proms.reduce((a, b) => a + b, 0) / proms.length : null,
         });
       })
       .catch(() => { /* sin red: el strip simplemente no se muestra */ });
   }, []);
 
-  const cards = [
-    {
-      id: 'registrar',
-      title: 'Registrar Empleado',
-      description: 'Agregar nuevo personal o servicio al sistema',
-      icon: <FaUserPlus />,
-      color: '#10B981'
-    },
-    {
-      id: 'buscar-empleado',
-      title: 'Buscar Empleado',
-      description: 'Verificar su historial y calificaciones',
-      icon: <FaSearch />,
-      color: '#0EA5E9'
-    },
-    {
-      id: 'buscar-servicio',
-      title: 'Buscar Servicio',
-      description: 'Encontrar servicios y proveedores para tu hogar',
-      icon: <FaTags />,
-      color: '#8B5CF6'
-    },
-    {
-      id: 'reportar',
-      title: 'Reportar Problema',
-      description: 'Reportar incidentes, robos o conflictos',
-      icon: <FaClipboardList />,
-      color: '#F59E0B'
-    }
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const auth = { headers: { Authorization: `Bearer ${token}` } };
+    fetch('/api/notificaciones', auth)
+      .then(r => (r.ok ? r.json() : []))
+      .then(d => Array.isArray(d) && setFeed(d.slice(0, 5)))
+      .catch(() => { /* sin feed, la tarjeta muestra vacío */ });
+    fetch('/api/eventos', auth)
+      .then(r => (r.ok ? r.json() : []))
+      .then(d => Array.isArray(d) && d.length && setEvento(d[0]))
+      .catch(() => { /* opcional */ });
+    fetch('/api/avisos', auth)
+      .then(r => (r.ok ? r.json() : []))
+      .then(d => Array.isArray(d) && d.length && setAviso(d[0]))
+      .catch(() => { /* opcional */ });
+  }, []);
+
+  const tabsAccion = [
+    { id: 'registrar', label: 'Registrar Empleado', icon: <FaUserPlus /> },
+    { id: 'buscar-empleado', label: 'Buscar Empleado', icon: <FaSearch /> },
+    { id: 'buscar-servicio', label: 'Buscar Servicio', icon: <FaTags /> },
+    { id: 'reportar', label: 'Reportar Problema', icon: <FaClipboardList /> },
   ];
 
   const handleCardClick = (id: string) => {
@@ -406,9 +445,22 @@ function Inicio() {
     }
   };
 
+  let nombreUsuario = 'vecino';
+  try {
+    const u = JSON.parse(localStorage.getItem('user') || '{}');
+    if (u.nombre_completo) nombreUsuario = u.nombre_completo.split(' ')[0];
+  } catch { /* fallback */ }
+  const fechaLarga = new Date().toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long' });
+
   return (
     <div className="inicio-container">
       <div className="inicio-content">
+        <div className="saludo">
+          <p className="saludo-fecha">{fechaLarga}</p>
+          <h1 className="saludo-titulo">Hola, {nombreUsuario}</h1>
+          <p className="saludo-sub">Así está tu fraccionamiento hoy</p>
+        </div>
+
         {/* Strip de stats */}
         {stats && (
           <div className="stats-strip">
@@ -443,22 +495,86 @@ function Inicio() {
           </div>
         )}
 
-        {/* Cards de acciones principales */}
-        <div className="action-cards-grid">
-          {cards.map((card) => (
-            <div
-              key={card.id}
-              className={`action-card ${selectedCard === card.id ? 'selected' : ''}`}
-              onClick={() => handleCardClick(card.id)}
-              style={{ '--card-accent': card.color } as React.CSSProperties}
-            >
-              <div className="card-icon">
-                {card.icon}
-              </div>
-              <h3>{card.title}</h3>
-              <p>{card.description}</p>
+        {/* Overview: gauge + actividad + comunidad */}
+        <div className="overview-grid">
+          <div className="overview-card">
+            <h2>Calificación de la comunidad</h2>
+            <GaugeRating valor={stats?.rating ?? null} />
+            <p className="overview-sub">
+              {stats && stats.calificados > 0
+                ? `Promedio de ${stats.calificados} empleado${stats.calificados === 1 ? '' : 's'} con calificaciones`
+                : 'Aún no hay calificaciones registradas'}
+            </p>
+          </div>
+
+          <div className="overview-card">
+            <div className="overview-head">
+              <h2>Actividad reciente</h2>
+              <Link to="/notificaciones" className="overview-link">Ver todo <FaChevronRight /></Link>
             </div>
-          ))}
+            {feed.length === 0 ? (
+              <p className="overview-empty">Sin actividad reciente.</p>
+            ) : (
+              <div className="feed-list">
+                {feed.map(item => (
+                  <div className="feed-item" key={item.id}>
+                    <span className={`feed-icon ${item.tipo}`}>
+                      {item.tipo === 'success' ? <FaCheckCircle /> : item.tipo === 'warning' ? <FaExclamationTriangle /> : <FaBell />}
+                    </span>
+                    <div className="feed-body">
+                      <p>{item.mensaje}</p>
+                      <span>{formatRelativo(item.fecha)}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="overview-card">
+            <div className="overview-head">
+              <h2>Tu comunidad</h2>
+              <Link to="/comunidad" className="overview-link">Ir a Comunidad <FaChevronRight /></Link>
+            </div>
+            {evento ? (
+              <div className="pulse-item">
+                <span className="pulse-icon" style={{ background: 'rgba(16,185,129,0.12)', color: '#059669' }}><FaCalendarAlt /></span>
+                <div className="feed-body">
+                  <p>{evento.titulo}</p>
+                  <span>
+                    {new Date(evento.fecha_inicio).toLocaleDateString('es-MX', { weekday: 'short', day: 'numeric', month: 'short' })}
+                    {evento.lugar ? ` · ${evento.lugar}` : ''}
+                  </span>
+                </div>
+              </div>
+            ) : (
+              <p className="overview-empty">No hay eventos próximos.</p>
+            )}
+            {aviso && (
+              <div className="pulse-item">
+                <span className="pulse-icon" style={{ background: 'rgba(14,165,233,0.12)', color: '#0284C7' }}><FaBullhorn /></span>
+                <div className="feed-body">
+                  <p>{aviso.titulo}</p>
+                  <span>Aviso{aviso.prioridad !== 'normal' ? ` ${aviso.prioridad}` : ''} · {formatRelativo(aviso.created_at)}</span>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Acciones con el patrón estándar de tabs */}
+        <div className="unified-card">
+          <div className="tabs tabs-inicio">
+            {tabsAccion.map(tab => (
+              <button
+                key={tab.id}
+                className={`tab ${selectedCard === tab.id ? 'active' : ''}`}
+                onClick={() => handleCardClick(tab.id)}
+              >
+                {tab.icon} {tab.label}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Sección dinámica según la tarjeta seleccionada */}
