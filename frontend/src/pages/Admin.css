@@ -1,8 +1,6 @@
 .admin-page {
-  padding: 2.5rem 2rem 4rem;
+  padding: 2.5rem 2.5rem 4rem;
   width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
 }
 
 .page-header {
@@ -479,4 +477,9 @@
   font-weight: 600;
   color: var(--color-text-light);
   margin-bottom: -6px;
+}
+
+.users-table th,
+.users-table td {
+  white-space: nowrap;
 }

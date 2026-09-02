@@ -1,8 +1,6 @@
 .notificaciones-page {
-  padding: 2.5rem 2rem 4rem;
+  padding: 2.5rem 2.5rem 4rem;
   width: 100%;
-  max-width: 900px;
-  margin: 0 auto;
 }
 
 .notificaciones-page .page-header {

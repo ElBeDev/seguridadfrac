@@ -1,9 +1,7 @@
 /* Empleados Page Styles */
 .empleados-page {
   width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2.5rem 2rem 4rem;
+  padding: 2.5rem 2.5rem 4rem;
 }
 
 /* Header */
@@ -389,4 +387,14 @@
   .detalle-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* En pantallas anchas la tabla respira: sin quiebres raros de celda */
+.table-card th,
+.table-card td {
+  white-space: nowrap;
+}
+
+.table-card td:first-child {
+  font-variant-numeric: tabular-nums;
 }

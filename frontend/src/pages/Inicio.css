@@ -1,6 +1,6 @@
 .inicio-container {
   width: 100%;
-  padding: 2.5rem 2rem 4rem;
+  padding: 2.5rem 2.5rem 4rem;
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -10,8 +10,6 @@
   position: relative;
   z-index: 1;
   width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
 }
 
 /* ---- Strip de stats ---- */
