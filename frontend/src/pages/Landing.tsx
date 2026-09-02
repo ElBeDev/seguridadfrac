@@ -179,7 +179,7 @@ function Landing() {
                 <div className="trust-section">
                   <div className="trust-item">
                     <FaCheckCircle size={13} />
-                    <span>Conexión cifrada (HTTPS)</span>
+                    <span>Conexión cifrada</span>
                   </div>
                   <div className="trust-item">
                     <FaShieldAlt size={13} />

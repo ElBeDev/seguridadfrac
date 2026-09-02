@@ -290,6 +290,18 @@
   color: #64748B;
 }
 
+/* Autofill del navegador: sin caja blanca sobre el tema oscuro */
+.input:-webkit-autofill,
+.input:-webkit-autofill:hover,
+.input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #F1F5F9;
+  -webkit-box-shadow: 0 0 0 1000px #14243A inset;
+  box-shadow: 0 0 0 1000px #14243A inset;
+  caret-color: #F1F5F9;
+  border-radius: 8px;
+  transition: background-color 600000s 0s, color 600000s 0s;
+}
+
 .login-button {
   background: var(--grad-brand);
   color: #fff;
@@ -331,6 +343,7 @@
   font-size: 0.78rem;
   color: #94A3B8;
   font-weight: 500;
+  white-space: nowrap;
 }
 
 .trust-item svg {
