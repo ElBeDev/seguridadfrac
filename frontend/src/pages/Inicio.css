@@ -508,6 +508,16 @@
     grid-template-columns: 1fr;
   }
 
+  /* Sin esto los inputs no se encogen y el formulario se sale de la pantalla */
+  .form-column,
+  .form-grid > * {
+    min-width: 0;
+  }
+
+  .about-section {
+    padding: 1.25rem;
+  }
+
   .inicio-container {
     padding: 1.5rem 1rem 2rem;
   }

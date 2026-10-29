@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { FaHome, FaUsers, FaBell, FaChartBar, FaShieldAlt, FaSignOutAlt, FaBullhorn, FaIdBadge, FaWallet, FaSearch } from 'react-icons/fa';
+import { FaHome, FaUsers, FaBell, FaChartBar, FaShieldAlt, FaSignOutAlt, FaBullhorn, FaIdBadge, FaWallet, FaSearch, FaBars, FaTimes } from 'react-icons/fa';
 import { APP_NAME } from '../config/branding';
 import './Sidebar.css';
 
@@ -9,6 +9,15 @@ interface NavItem { path: string; icon: React.ComponentType; label: string }
 function Sidebar() {
   const location = useLocation();
   const [busqueda, setBusqueda] = useState('');
+  // En celular y tablet el menú es un panel que se abre desde la barra de arriba
+  const [abierto, setAbierto] = useState(false);
+
+  useEffect(() => {
+    if (!abierto) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setAbierto(false); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [abierto]);
 
   let user: { nombre_completo?: string; email?: string; rol?: string } = {};
   try {
@@ -65,8 +74,25 @@ function Sidebar() {
   const todo: NavItem[] = [...tiles, ...secciones.flatMap(s => s.items)];
   const resultados = q ? todo.filter(i => i.label.toLowerCase().includes(q)) : [];
 
+  const seccionActual = todo.find(i => i.path === location.pathname)?.label;
+
   return (
-    <aside className="sidebar">
+    <>
+    <header className="mobile-bar">
+      <img alt={APP_NAME} src="/logo.svg" />
+      <span className="mobile-bar-title">{seccionActual || APP_NAME}</span>
+      <button
+        className="mobile-bar-toggle"
+        onClick={() => setAbierto(a => !a)}
+        aria-label={abierto ? 'Cerrar menú' : 'Abrir menú'}
+        aria-expanded={abierto}
+        aria-controls="menu-principal"
+      >
+        {abierto ? <FaTimes /> : <FaBars />}
+      </button>
+    </header>
+    <div className={`sidebar-backdrop ${abierto ? 'open' : ''}`} onClick={() => setAbierto(false)} aria-hidden />
+    <aside id="menu-principal" className={`sidebar ${abierto ? 'open' : ''}`}>
       <div className="sidebar-header">
         <img alt={APP_NAME} src="/logo.svg" />
         <div className="brand-text">
@@ -86,7 +112,8 @@ function Sidebar() {
         />
       </div>
 
-      <nav className="sidebar-nav">
+      {/* Al elegir una sección el panel se cierra solo */}
+      <nav className="sidebar-nav" onClick={e => { if ((e.target as HTMLElement).closest('a')) setAbierto(false); }}>
         {q ? (
           <div className="nav-section">
             <span className="nav-section-title">Resultados</span>
@@ -159,6 +186,7 @@ function Sidebar() {
         </div>
       </div>
     </aside>
+    </>
   );
 }
 

@@ -30,3 +30,11 @@
   align-items: stretch;
   justify-content: flex-start;
 }
+
+@media (max-width: 900px) {
+  .main-content {
+    margin-left: 0;
+    padding-top: var(--mobile-bar-height);
+    min-width: 0;
+  }
+}
